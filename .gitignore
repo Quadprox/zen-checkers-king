@@ -1,3 +1,6 @@
+# App test files:
+functest.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
