@@ -10,7 +10,8 @@ def clear():
 
     for row in SURFACE_GRID.keys():
         for column in SURFACE_GRID[row].keys():
-            SURFACE_GRID[row][column] = None
+            if SURFACE_GRID[row][column] is not None:
+                SURFACE_GRID[row][column] = None
     SURFACE_EMPTY = True
 
 
