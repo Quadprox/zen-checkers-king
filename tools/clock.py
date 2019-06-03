@@ -1,4 +1,10 @@
 import time
+import math
+
+
+def __round(value: float):
+    rounded_value = math.floor(value)
+    return rounded_value
 
 
 def now():
