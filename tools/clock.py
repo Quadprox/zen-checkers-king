@@ -20,7 +20,7 @@ def convert(value: float):
     seconds = seconds - minutes * seconds_in_minute
     hours = minutes // minutes_in_hour
     minutes = minutes - hours * minutes_in_hour
-    proper = [int(hours),
-              int(minutes),
-              int(seconds)]
+    proper = [__round(hours),
+              __round(minutes),
+              __round(seconds)]
     return proper
