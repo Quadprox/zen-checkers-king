@@ -68,10 +68,10 @@ def __checker_complex_queen_index(ch_coord_x: int, ch_coord_y: int, ch_color: st
 
 def __checker_simple_queen_index(ch_coord_x: int, ch_coord_y: int, ch_color: str):
     draw.line(
-        line_start_x=int(ch_coord_x - settings.CHECKER_RADIUS_OUTER / 2),
-        line_start_y=ch_coord_y,
-        line_end_x=int(ch_coord_x + settings.CHECKER_RADIUS_OUTER / 2),
-        line_end_y=ch_coord_y,
+        line_start_x=int(ch_coord_x - settings.CHECKER_RADIUS_OUTER) + 5,
+        line_start_y=ch_coord_y - 15,
+        line_end_x=int(ch_coord_x + settings.CHECKER_RADIUS_OUTER) - 5,
+        line_end_y=ch_coord_y + 15,
         line_color=settings.CHECKER_COLOR_WHITE_MAIN if ch_color.lower() == 'white' else
                    settings.CHECKER_COLOR_BLACK_MAIN if ch_color.lower() == 'black' else
                    settings.ERROR_COLOR_MAIN,
@@ -153,7 +153,7 @@ def __checker_complex(ch_coord_x: int, ch_coord_y: int, ch_color: str, ch_queen:
 
 
 def checker(ch_coord_x: int, ch_coord_y: int, ch_color: str, ch_queen: bool = False):
-    style = session.RENDER_STYLE_CHECKERS
+    style = session.RENDER_MODE_CHECKER
     render_checker = {
         0: lambda: __checker_simple(ch_coord_x, ch_coord_y, ch_color, ch_queen),
         1: lambda: __checker_complex(ch_coord_x, ch_coord_y, ch_color, ch_queen)
