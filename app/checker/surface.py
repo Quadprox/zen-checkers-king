@@ -13,7 +13,8 @@ def __render_opengl(coord_x: int, coord_y: int, color: str, queen: bool = False)
 
 def __render_texture(coord_x: int, coord_y: int, color: str, queen: bool = False):
     texture.render(
-        texture_filename='checker_{color}{type}.png'.format(color=color.lower(), type='_queen' if queen else ''),
+        texture_filename='checker_{color}{type}.png'.format(color=color.lower(),
+                                                            type='_queen' if queen else ''),
         texture_coord_x=coord_x,
         texture_coord_y=coord_y,
     )
