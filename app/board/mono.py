@@ -1,4 +1,4 @@
-from app.board import surface, mapping, get
+from app.board import surface, mapping
 
 
 class Board:
@@ -14,6 +14,14 @@ class Board:
     def fill():
         mapping.fill()
 
+    @staticmethod
+    def update():
+        for row in mapping.SURFACE_GRID:
+            for column in mapping.SURFACE_GRID[row]:
+                if mapping.SURFACE_GRID[row][column] is not None:
+                    checker = mapping.SURFACE_GRID[row][column]
+                    checker.update()
+
     @property
     def map_is_cleared(self):
         status = mapping.SURFACE_EMPTY
@@ -25,9 +33,5 @@ class Board:
         if render_checkers:
             for row in mapping.SURFACE_GRID:
                 for column in mapping.SURFACE_GRID[row]:
-                    position = [row, column]
-                    tile_contains_checker = False
-                    if get.checker_by_position(check_position=position) is not None:
-                        tile_contains_checker = True
-                    if tile_contains_checker:
+                    if mapping.SURFACE_GRID[row][column] is not None:
                         mapping.SURFACE_GRID[row][column].display()

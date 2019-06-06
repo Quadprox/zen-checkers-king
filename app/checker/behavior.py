@@ -1,5 +1,4 @@
 from app.board import get, test
-from app.checker import spawn
 
 
 POINTER_POS_CHECKER = None

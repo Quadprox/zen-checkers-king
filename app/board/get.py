@@ -13,4 +13,4 @@ def checker_by_position(check_position: list):
 def checker_by_coordinates(check_coordinates: list):
     if test.coordinates_in_board_boundaries(check_coordinates):
         board_position = convert.coordinates_to_board_position(check_coordinates)
-        checker_by_position(board_position)
+        return checker_by_position(board_position)
