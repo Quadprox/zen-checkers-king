@@ -16,6 +16,7 @@ class Checker:
         self.position = init_position       # List type collection, eg. [1, 2]
         self.color = init_color             # White / Black
         self.queen = init_type_queen        # True / False (default)
+        self.dev = False                    # True, if force-spawn / False (default)
 
         # Protected private attributes:
         self.__move_list = []               # Contains board positions current checker can move to
@@ -87,6 +88,9 @@ class Checker:
         behavior.move(checker_object=self, new_position=position)
 
     def update(self):
+        if self.can_promote and not self.dev:
+            self.promote()
+
         updated_move_list = behavior.get_move_list(checker_object=self)
         if updated_move_list is not None:
             self.__move_list = updated_move_list[0]         # Move list
