@@ -81,3 +81,7 @@ def get_move_list(checker_object):
                                 break
 
     return checker_move_list
+
+
+def move(checker_object, new_position):
+    pass

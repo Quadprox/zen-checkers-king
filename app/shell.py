@@ -33,6 +33,10 @@ class Shell(arcade.Window):
         arcade.set_background_color(color=settings.GAME_WINDOW_BACKGROUND_COLOR)
         arcade.run()
 
+    def __next_player_turn(self):
+        self.active_player = 2 if self.active_player == 1 else 1
+        self.board.update()
+
     def on_draw(self):
 
         def display_highlighted_tiles():
@@ -83,96 +87,67 @@ class Shell(arcade.Window):
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
 
         def handle_board_click(coordinates):
-
-            def clicked():
-                result = False
-                if test.coordinates_are_valid(coordinates):
-                    if test.coordinates_in_board_boundaries(coordinates):
-                        result = True
-                return result
-
-            def clicked_same_color(checker_object):
-                result = True if self.active_player == 1 and checker_object.color.lower() == 'white' or \
-                                 self.active_player == 2 and checker_object.color.lower() == 'black' else False
-                return result
-
-            def clicked_same_checker(checker_object):
-                result = False
-                if checker_object == self.checker_selected:
-                    result = True
-                return result
-
-            def select(checker_object):
-                self.checker_selected = checker_object
-
-            def deselect():
-                self.checker_selected = None
-
-            if clicked():
-                checker_clicked = get.checker_by_coordinates(coordinates)
-                if checker_clicked is None:
-                    deselect()
-                else:
-                    if not clicked_same_color(checker_clicked):
-                        deselect()
+            if test.coordinates_are_valid(coordinates):
+                if test.coordinates_in_board_boundaries(coordinates):
+                    checker_clicked = get.checker_by_coordinates(coordinates)
+                    if checker_clicked is None:
+                        if self.checker_selected is not None:
+                            clicked_position = convert.coordinates_to_board_position(coordinates)
+                            if self.checker_selected.can_move:
+                                if self.checker_selected.can_kill:
+                                    if clicked_position in self.checker_selected.kill_list:
+                                        self.checker_selected.move(clicked_position)
+                                        self.__next_player_turn()
+                                else:
+                                    if clicked_position in self.checker_selected.move_list:
+                                        self.checker_selected.move(clicked_position)
+                                        self.__next_player_turn()
+                            self.checker_selected = None
                     else:
-                        if clicked_same_checker(checker_clicked):
-                            deselect()
+                        if not (self.active_player == 1 and checker_clicked.color.lower() == 'white' or
+                                self.active_player == 2 and checker_clicked.color.lower() == 'black'):
+                            self.checker_selected = None
                         else:
-                            select(checker_clicked)
-                            print(checker_clicked,
-                                  '\nmoves:', checker_clicked.move_list,
-                                  '\nkill:', checker_clicked.kill_list)
+                            if checker_clicked == self.checker_selected:
+                                self.checker_selected = None
+                            else:
+                                self.checker_selected = checker_clicked
 
         def handle_board_click_dev(coordinates):
-
-            def clicked():
-                result = False
-                if test.coordinates_are_valid(coordinates):
-                    if test.coordinates_in_board_boundaries(coordinates):
-                        result = True
-                return result
-
-            def rotate_color(checker):
-                checker.color = 'White' if checker.color == 'Black' else 'Black'
-
-            def promote_checker(checker):
-                checker.promote()
-
-            def remove_checker(checker):
-                row, column = checker.position[0], checker.position[1]
-                mapping.SURFACE_GRID[row][column] = None
-
-            if clicked():
-                checker_clicked = get.checker_by_coordinates(coordinates)
-                clicked_position = convert.coordinates_to_board_position(coordinates)
-                clicked_row, clicked_column = clicked_position[0], clicked_position[1]
-                if checker_clicked is None:
-                    new_checker = spawn.checker(spawn_position=clicked_position,
-                                                spawn_color='White',
-                                                spawn_queen=False)
-                    mapping.SURFACE_GRID[clicked_row][clicked_column] = new_checker
-                else:
-                    if checker_clicked.queen:
-                        if checker_clicked.color == 'White':
-                            rotate_color(checker_clicked)
-                        else:
-                            remove_checker(checker_clicked)
+            if test.coordinates_are_valid(coordinates):
+                if test.coordinates_in_board_boundaries(coordinates):
+                    checker_clicked = get.checker_by_coordinates(coordinates)
+                    clicked_position = convert.coordinates_to_board_position(coordinates)
+                    clicked_row, clicked_column = clicked_position[0], clicked_position[1]
+                    if checker_clicked is None:
+                        new_checker = spawn.checker(spawn_position=clicked_position,
+                                                    spawn_color='White',
+                                                    spawn_queen=False)
+                        mapping.SURFACE_GRID[clicked_row][clicked_column] = new_checker
                     else:
-                        if checker_clicked.color == 'White':
-                            rotate_color(checker_clicked)
+                        if checker_clicked.queen:
+                            if checker_clicked.color == 'White':
+                                checker_clicked.color = 'White' if checker_clicked.color == 'Black' else 'Black'
+                            else:
+                                mapping.SURFACE_GRID[clicked_row][clicked_column] = None
                         else:
-                            rotate_color(checker_clicked)
-                            promote_checker(checker_clicked)
-                self.board.update()
-
+                            if checker_clicked.color == 'White':
+                                checker_clicked.color = 'White' if checker_clicked.color == 'Black' else 'Black'
+                            else:
+                                checker_clicked.color = 'White' if checker_clicked.color == 'Black' else 'Black'
+                                checker_clicked.promote()
+                    self.board.update()
 
         click_coordinates = [x, y]
+
+        # Board surface clicked:
         if test.coordinates_in_board_boundaries(click_coordinates):
             if button == arcade.MOUSE_BUTTON_LEFT:
                 handle_board_click(click_coordinates)
             else:
                 handle_board_click_dev(click_coordinates)
+
+        # UI panel clicked:
         else:
             pass
 

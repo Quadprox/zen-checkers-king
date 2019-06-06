@@ -83,6 +83,9 @@ class Checker:
         if not self.queen:
             self.queen = True
 
+    def move(self, position):
+        behavior.move(checker_object=self, new_position=position)
+
     def update(self):
         updated_move_list = behavior.get_move_list(checker_object=self)
         if updated_move_list is not None:
