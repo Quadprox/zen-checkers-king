@@ -1,6 +1,7 @@
 import arcade
 from app import settings, session
-from app.board import mono as board, convert, test, get
+from app.board import mono as board, convert, test, get, mapping
+from app.checker import spawn
 from tools import stamp
 
 
@@ -9,7 +10,7 @@ class Shell(arcade.Window):
     def __init__(self):
 
         self.board = board.Board()
-        self.board.fill()
+
         self.board.update()
         self.player = None
 
@@ -58,7 +59,7 @@ class Shell(arcade.Window):
             if len(attack_list) > 0:
                 for attack_position in attack_list:
                     if attack_position in move_list:
-                        del move_list[attack_position]
+                        move_list.remove(attack_position)
 
             # Highlighting move positions and attack positions:
             highlight_move()
@@ -72,14 +73,17 @@ class Shell(arcade.Window):
                 display_highlighted_tiles()
 
     def on_key_press(self, symbol: int, modifiers: int):
-        pass
+        if symbol == arcade.key.KEY_1:
+            self.active_player = 1
+        elif symbol == arcade.key.KEY_2:
+            self.active_player = 2
 
     def on_key_release(self, symbol: int, modifiers: int):
         pass
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
 
-        def listen_if_checker_was_clicked(coordinates):
+        def handle_board_click(coordinates):
 
             def clicked():
                 result = False
@@ -117,10 +121,59 @@ class Shell(arcade.Window):
                             deselect()
                         else:
                             select(checker_clicked)
+                            print(checker_clicked,
+                                  '\nmoves:', checker_clicked.move_list,
+                                  '\nkill:', checker_clicked.kill_list)
+
+        def handle_board_click_dev(coordinates):
+
+            def clicked():
+                result = False
+                if test.coordinates_are_valid(coordinates):
+                    if test.coordinates_in_board_boundaries(coordinates):
+                        result = True
+                return result
+
+            def rotate_color(checker):
+                checker.color = 'White' if checker.color == 'Black' else 'Black'
+
+            def promote_checker(checker):
+                checker.promote()
+
+            def remove_checker(checker):
+                row, column = checker.position[0], checker.position[1]
+                mapping.SURFACE_GRID[row][column] = None
+
+            if clicked():
+                checker_clicked = get.checker_by_coordinates(coordinates)
+                clicked_position = convert.coordinates_to_board_position(coordinates)
+                clicked_row, clicked_column = clicked_position[0], clicked_position[1]
+                if checker_clicked is None:
+                    new_checker = spawn.checker(spawn_position=clicked_position,
+                                                spawn_color='White',
+                                                spawn_queen=False)
+                    mapping.SURFACE_GRID[clicked_row][clicked_column] = new_checker
+                else:
+                    if checker_clicked.queen:
+                        if checker_clicked.color == 'White':
+                            rotate_color(checker_clicked)
+                        else:
+                            remove_checker(checker_clicked)
+                    else:
+                        if checker_clicked.color == 'White':
+                            rotate_color(checker_clicked)
+                        else:
+                            rotate_color(checker_clicked)
+                            promote_checker(checker_clicked)
+                self.board.update()
+
 
         click_coordinates = [x, y]
         if test.coordinates_in_board_boundaries(click_coordinates):
-            listen_if_checker_was_clicked(click_coordinates)
+            if button == arcade.MOUSE_BUTTON_LEFT:
+                handle_board_click(click_coordinates)
+            else:
+                handle_board_click_dev(click_coordinates)
         else:
             pass
 
