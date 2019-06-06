@@ -23,6 +23,9 @@ class Shell(arcade.Window):
             antialiasing=settings.GAME_WINDOW_ANTIALIASING
         )
 
+        self.__dev_mode = session.DEV_MODE
+        self.__test_mode = session.TEST_MODE
+
         self.active_player = 1              # 1 = White, 2 = Black;
         self.checker_selected = None        # None, if deselected;
         self.tile_hovered = None
@@ -36,20 +39,38 @@ class Shell(arcade.Window):
         arcade.set_background_color(color=settings.GAME_WINDOW_BACKGROUND_COLOR)
         arcade.run()
 
-    def __player_must_attack(self):
+    def __player_color(self):
         player_color = 'White' if self.active_player == 1 else 'Black'
+        return player_color
+
+    def __player_must_attack(self):
         must_attack = False
         for row in mapping.SURFACE_GRID:
             for column in mapping.SURFACE_GRID[row]:
                 checker = mapping.SURFACE_GRID[row][column]
                 if checker is not None:
-                    if checker.color == player_color:
+                    if checker.color == self.__player_color():
                         if checker.can_kill:
                             must_attack = True
+                            break
         return must_attack
+
+    def __player_cannot_move(self):
+        cannot_move = True
+        for row in mapping.SURFACE_GRID:
+            for column in mapping.SURFACE_GRID[row]:
+                checker = mapping.SURFACE_GRID[row][column]
+                if checker is not None:
+                    if checker.color == self.__player_color():
+                        if checker.can_move:
+                            cannot_move = False
+                            break
+        return cannot_move
 
     def __next_player_turn(self):
         self.active_player = 2 if self.active_player == 1 else 1
+        if self.__player_cannot_move():
+            self.__board_reset()
 
     def __board_clear(self):
         self.board.clear()
@@ -165,29 +186,44 @@ class Shell(arcade.Window):
                                 self.checker_selected = checker_clicked
 
         def handle_board_click_dev(coordinates):
+
+            def spawn_checker():
+                new_checker = spawn.checker(spawn_position=clicked_position,
+                                            spawn_color='White',
+                                            spawn_queen=False)
+                new_checker.dev = True
+                mapping.SURFACE_GRID[clicked_row][clicked_column] = new_checker
+
+            def switch_color(checker_object):
+                checker_object.color = 'White' if checker_object.color == 'Black' else 'Black'
+
+            def promote_checker(checker_object):
+                checker_object.promote()
+
+            def remove_checker():
+                mapping.SURFACE_GRID[clicked_row][clicked_column] = None
+
             if test.coordinates_are_valid(coordinates):
                 if test.coordinates_in_board_boundaries(coordinates):
                     checker_clicked = get.checker_by_coordinates(coordinates)
                     clicked_position = convert.coordinates_to_board_position(coordinates)
+
                     if test.position_can_be_used(clicked_position):
                         clicked_row, clicked_column = clicked_position[0], clicked_position[1]
                         if checker_clicked is None:
-                            new_checker = spawn.checker(spawn_position=clicked_position,
-                                                        spawn_color='White',
-                                                        spawn_queen=False)
-                            mapping.SURFACE_GRID[clicked_row][clicked_column] = new_checker
+                            spawn_checker()
                         else:
                             if checker_clicked.queen:
                                 if checker_clicked.color == 'White':
-                                    checker_clicked.color = 'White' if checker_clicked.color == 'Black' else 'Black'
+                                    switch_color(checker_clicked)
                                 else:
-                                    mapping.SURFACE_GRID[clicked_row][clicked_column] = None
+                                    remove_checker()
                             else:
                                 if checker_clicked.color == 'White':
-                                    checker_clicked.color = 'White' if checker_clicked.color == 'Black' else 'Black'
+                                    switch_color(checker_clicked)
                                 else:
-                                    checker_clicked.color = 'White' if checker_clicked.color == 'Black' else 'Black'
-                                    checker_clicked.promote()
+                                    switch_color(checker_clicked)
+                                    promote_checker(checker_clicked)
                         self.board.update()
 
         click_coordinates = [x, y]
