@@ -1,4 +1,4 @@
-from app.board import get, test
+from app.board import get, test, mapping
 
 
 POINTER_POS_CHECKER = None
@@ -31,14 +31,26 @@ def __forward(checker_color: str, movement_axis: int):
     POINTER_FORWARD = result
 
 
+def __between(old_position, new_position):
+    tiles_between = []
+    between_count = abs(old_position[0] - new_position[0])
+    if between_count > 1:
+        row_offset = 1 if old_position[0] < new_position[0] else -1
+        column_offset = 1 if old_position[1] < new_position[1] else -1
+        position_between = old_position
+        while True:
+            position_between = [position_between[0] + row_offset, position_between[1] + column_offset]
+            if not test.position_is_valid(position_between):
+                break
+            else:
+                if position_between in (old_position, new_position):
+                    break
+                else:
+                    tiles_between.append(position_between)
+    return tiles_between
+
+
 def get_move_list(checker_object):
-
-    def add_to_moves(position):
-        checker_move_list[0].append(position)
-
-    def add_to_attacks(position):
-        checker_move_list[1].append(position)
-
     checker_move_list = [[], []]
     checker_position = checker_object.position
     checker_color = checker_object.color
@@ -58,17 +70,17 @@ def get_move_list(checker_object):
                     if POINTER_POS_EMPTY:
                         if not checker_attacking:
                             if POINTER_FORWARD:
-                                add_to_moves(peek_position)
+                                checker_move_list[0].append(peek_position)
                                 if not checker_queen:
                                     break
                             else:
                                 if not checker_queen:
                                     break
                                 else:
-                                    add_to_moves(peek_position)
+                                    checker_move_list[0].append(peek_position)
                         else:
-                            add_to_moves(peek_position)
-                            add_to_attacks(peek_position)
+                            checker_move_list[0].append(peek_position)
+                            checker_move_list[1].append(peek_position)
                             if not checker_queen:
                                 break
                     else:
@@ -79,5 +91,18 @@ def get_move_list(checker_object):
                                 checker_attacking = True
                             else:
                                 break
-
     return checker_move_list
+
+
+def move(checker_object, new_position):
+    tiles_between = __between(old_position=checker_object.position,
+                              new_position=new_position)
+    if len(tiles_between) > 0:
+        for position in tiles_between:
+            row, column = position[0], position[1]
+            mapping.SURFACE_GRID[row][column] = None
+
+    # Moving the checker from old to new positions:
+    mapping.SURFACE_GRID[checker_object.position[0]][checker_object.position[1]] = None     # Delete old instance
+    mapping.SURFACE_GRID[new_position[0]][new_position[1]] = checker_object                 # Move instance to position
+    checker_object.set_position(new_position)
