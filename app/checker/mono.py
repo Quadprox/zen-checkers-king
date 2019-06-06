@@ -84,9 +84,6 @@ class Checker:
             self.queen = True
 
     def update(self):
-        if self.can_promote:
-            self.promote()
-
         updated_move_list = behavior.get_move_list(checker_object=self)
         if updated_move_list is not None:
             self.__move_list = updated_move_list[0]         # Move list
