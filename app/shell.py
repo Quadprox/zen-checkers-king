@@ -69,8 +69,7 @@ class Shell(arcade.Window):
 
         self.board.display(render_checkers=True)
         if self.checker_selected is not None:
-            if self.checker_selected.can_move:
-                display_highlighted_tiles()
+            display_highlighted_tiles()
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.KEY_1:
