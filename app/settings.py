@@ -3,7 +3,7 @@ import os
 
 # General project information and directories:
 PROJECT_NAME = 'Zen Checkers King'
-PROJECT_APP_VERSION = '0.5.0 checker-behavior'
+PROJECT_APP_VERSION = '0.5.0'
 PROJECT_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_APP_DIR = os.path.dirname(__file__)
 PROJECT_TOOLS_DIR = os.path.join(PROJECT_DIR, 'tools')
