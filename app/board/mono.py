@@ -28,10 +28,12 @@ class Board:
         return status
 
     @staticmethod
-    def display(render_checkers: bool = True):
+    def display():
         surface.display()
-        if render_checkers:
-            for row in mapping.SURFACE_GRID:
-                for column in mapping.SURFACE_GRID[row]:
-                    if mapping.SURFACE_GRID[row][column] is not None:
-                        mapping.SURFACE_GRID[row][column].display()
+
+    @staticmethod
+    def display_checkers():
+        for row in mapping.SURFACE_GRID:
+            for column in mapping.SURFACE_GRID[row]:
+                if mapping.SURFACE_GRID[row][column] is not None:
+                    mapping.SURFACE_GRID[row][column].display()
