@@ -50,26 +50,21 @@ class Shell(arcade.Window):
 
     def __player_must_attack(self):
         must_attack = False
-        for row in mapping.SURFACE_GRID:
-            for column in mapping.SURFACE_GRID[row]:
-                checker = mapping.SURFACE_GRID[row][column]
-                if checker is not None:
-                    if checker.color == self.__player_color():
-                        if checker.can_kill:
-                            must_attack = True
-                            break
+        attack_checkers = get.checkers_that_can_attack()
+        for checker in attack_checkers:
+            if checker.color == self.__player_color():
+                must_attack = True
+                break
         return must_attack
 
     def __player_cannot_move(self):
         cannot_move = True
-        for row in mapping.SURFACE_GRID:
-            for column in mapping.SURFACE_GRID[row]:
-                checker = mapping.SURFACE_GRID[row][column]
-                if checker is not None:
-                    if checker.color == self.__player_color():
-                        if checker.can_move:
-                            cannot_move = False
-                            break
+        move_checkers = get.checkers_that_can_move()
+        for checker in move_checkers:
+            if checker.color == self.__player_color():
+                if checker.can_move:
+                    cannot_move = False
+                    break
         return cannot_move
 
     def __next_player_turn(self):
@@ -175,23 +170,48 @@ class Shell(arcade.Window):
         self.board.display_checkers()
 
     def on_key_press(self, symbol: int, modifiers: int):
+
+        def enable_hint():
+            self.highlight_checkers_move = True
+            self.highlight_checkers_attack = True
+
         if symbol == arcade.key.KEY_1:
             self.active_player = 1
         elif symbol == arcade.key.KEY_2:
             self.active_player = 2
         elif symbol == arcade.key.H:
-            self.highlight_checkers_move = True
-            self.highlight_checkers_attack = True
+            enable_hint()
 
 
     def on_key_release(self, symbol: int, modifiers: int):
-        if symbol == arcade.key.H:
+
+        def disable_hint():
             self.highlight_checkers_move = False
             self.highlight_checkers_attack = False
+
+        if symbol == arcade.key.H:
+            disable_hint()
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
 
         def handle_board_click(coordinates):
+
+            def force_hint():
+                if self.highlight_checkers_move:
+                    self.highlight_checkers_move = False
+                self.highlight_checkers_attack = True
+
+            def select_checker(checker_object):
+                self.active_checker = checker_object
+
+            def deselect_checker():
+                self.active_checker = None
+
+            def assert_player_owns_checker(checker_object):
+                result = False
+                if self.__player_color() == checker_object.color:
+                    result = True
+                return result
 
             def try_moving():
                 if self.active_checker.can_kill:
@@ -199,14 +219,14 @@ class Shell(arcade.Window):
                 else:
                     if self.__player_must_attack():
                         print('Unable to move. You have a checker, that should perform an attack!')
-                        self.active_checker = None
-                        self.highlight_checkers_attack = True
+                        deselect_checker()
+                        force_hint()
                     else:
                         if clicked_position in self.active_checker.move_list:
                             self.active_checker.move(clicked_position)
                             self.__board_update()
                             self.__next_player_turn()
-                            self.active_checker = None
+                            deselect_checker()
 
             def try_attacking():
                 if clicked_position in self.active_checker.kill_list:
@@ -214,7 +234,7 @@ class Shell(arcade.Window):
                     self.__board_update()
                     if not self.active_checker.can_kill:
                         self.__next_player_turn()
-                        self.active_checker = None
+                        deselect_checker()
 
             if test.coordinates_are_valid(coordinates):
                 if test.coordinates_in_board_boundaries(coordinates):
@@ -226,14 +246,13 @@ class Shell(arcade.Window):
                             if self.active_checker.can_move or self.active_checker.can_kill:
                                 try_moving()
                     else:
-                        if not (self.active_player == 1 and checker_clicked.color.lower() == 'white' or
-                                self.active_player == 2 and checker_clicked.color.lower() == 'black'):
-                            self.active_checker = None
+                        if not assert_player_owns_checker(checker_clicked):
+                            deselect_checker()
                         else:
                             if checker_clicked == self.active_checker:
-                                self.active_checker = None
+                                deselect_checker()
                             else:
-                                self.active_checker = checker_clicked
+                                select_checker(checker_clicked)
 
         def handle_board_click_dev(coordinates):
 
