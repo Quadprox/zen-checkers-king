@@ -3,8 +3,7 @@ from app.board import test, convert, mapping
 
 def checker_by_position(check_position: list):
     if test.position_can_be_used(check_position):
-        row = check_position[0]
-        column = check_position[1]
+        row, column = check_position
         if mapping.SURFACE_GRID[row][column] is not None:
             checker = mapping.SURFACE_GRID[row][column]
             return checker

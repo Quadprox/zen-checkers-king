@@ -21,7 +21,6 @@ def fill():
 
     for row in SURFACE_GRID.keys():
         for column in SURFACE_GRID[row].keys():
-            pass
             board_position = [row, column]
             if test.position_can_spawn_checker(check_position=board_position):
                 if SURFACE_GRID[row][column] is None:
