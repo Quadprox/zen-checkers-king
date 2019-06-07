@@ -35,3 +35,4 @@ def fill():
 def empty():
     status = SURFACE_EMPTY
     return status
+

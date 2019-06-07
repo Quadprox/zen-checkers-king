@@ -3,7 +3,6 @@ from app import settings, session
 from app.board import mono as board, convert, test, get, mapping
 from app.checker import spawn
 from tools import stamp
-import random
 
 
 class Shell(arcade.Window):
@@ -26,9 +25,11 @@ class Shell(arcade.Window):
         self.__dev_mode = session.DEV_MODE
         self.__test_mode = session.TEST_MODE
 
-        self.active_player = 1              # 1 = White, 2 = Black;
-        self.checker_selected = None        # None, if deselected;
-        self.tile_hovered = None
+        self.active_player = 1                          # 1 = White, 2 = Black;
+        self.active_checker = None                      # None, if deselected;
+
+        self.highlight_checkers_move = False
+        self.highlight_checkers_attack = False
 
 
     def setup(self):
@@ -39,32 +40,31 @@ class Shell(arcade.Window):
         arcade.set_background_color(color=settings.GAME_WINDOW_BACKGROUND_COLOR)
         arcade.run()
 
+    def __remove_all_highlights(self):
+        self.highlight_checkers_attack = False
+        self.highlight_checkers_move = False
+
     def __player_color(self):
         player_color = 'White' if self.active_player == 1 else 'Black'
         return player_color
 
     def __player_must_attack(self):
         must_attack = False
-        for row in mapping.SURFACE_GRID:
-            for column in mapping.SURFACE_GRID[row]:
-                checker = mapping.SURFACE_GRID[row][column]
-                if checker is not None:
-                    if checker.color == self.__player_color():
-                        if checker.can_kill:
-                            must_attack = True
-                            break
+        attack_checkers = get.checkers_that_can_attack()
+        for checker in attack_checkers:
+            if checker.color == self.__player_color():
+                must_attack = True
+                break
         return must_attack
 
     def __player_cannot_move(self):
         cannot_move = True
-        for row in mapping.SURFACE_GRID:
-            for column in mapping.SURFACE_GRID[row]:
-                checker = mapping.SURFACE_GRID[row][column]
-                if checker is not None:
-                    if checker.color == self.__player_color():
-                        if checker.can_move:
-                            cannot_move = False
-                            break
+        move_checkers = get.checkers_that_can_move()
+        for checker in move_checkers:
+            if checker.color == self.__player_color():
+                if checker.can_move:
+                    cannot_move = False
+                    break
         return cannot_move
 
     def __next_player_turn(self):
@@ -88,16 +88,58 @@ class Shell(arcade.Window):
 
     def on_draw(self):
 
+        def display_highlighted_checkers():
+
+            def remove_duplicates():
+                nonlocal checkers_move_list
+                for checker in checkers_attack_list:
+                    if checker in checkers_move_list:
+                        checkers_move_list.remove(checker)
+
+            def highlight_attack():
+                for checker in checkers_attack_list:
+                    if checker.color == self.__player_color():
+                        coordinates = checker.coordinates
+                        stamp.board_tile_highlight_attack(tile_coord_x=coordinates[0],
+                                                          tile_coord_y=coordinates[1])
+
+            def highlight_moves():
+                for checker in checkers_move_list:
+                    if checker.color == self.__player_color():
+                        coordinates = checker.coordinates
+                        stamp.board_tile_highlight_move(tile_coord_x=coordinates[0],
+                                                        tile_coord_y=coordinates[1])
+
+            checkers_move_list = get.checkers_that_can_move()
+            checkers_attack_list = get.checkers_that_can_attack()
+            if self.highlight_checkers_move and self.highlight_checkers_attack:
+                remove_duplicates()
+                highlight_attack()
+                highlight_moves()
+            else:
+                if self.highlight_checkers_move:
+                    highlight_moves()
+                if self.highlight_checkers_attack:
+                    highlight_attack()
+
         def display_highlighted_tiles():
 
-            def highlight_move():
+            def highlight_move_tiles():
+                if self.active_checker.can_move and not self.active_checker.can_kill:
+                    checker_coordinates = self.active_checker.coordinates
+                    stamp.board_tile_highlight_move(tile_coord_x=checker_coordinates[0],
+                                                    tile_coord_y=checker_coordinates[1])
                 for move_position in move_list:
                     coordinates = convert.board_position_to_coordinates(conv_position=move_position)
                     move_position_coord_x, move_position_coord_y = coordinates[0], coordinates[1]
                     stamp.board_tile_highlight_move(tile_coord_x=move_position_coord_x,
                                                     tile_coord_y=move_position_coord_y)
 
-            def highlight_attack():
+            def highlight_attack_tiles():
+                if self.active_checker.can_kill:
+                    checker_coordinates = self.active_checker.coordinates
+                    stamp.board_tile_highlight_attack(tile_coord_x=checker_coordinates[0],
+                                                      tile_coord_y=checker_coordinates[1])
                 for attack_position in attack_list:
                     coordinates = convert.board_position_to_coordinates(conv_position=attack_position)
                     move_position_coord_x, move_position_coord_y = coordinates[0], coordinates[1]
@@ -105,85 +147,112 @@ class Shell(arcade.Window):
                                                       tile_coord_y=move_position_coord_y)
 
             # Collecting move list and attack list:
-            move_list = self.checker_selected.move_list
-            attack_list = self.checker_selected.kill_list
+            move_list = self.active_checker.move_list
+            attack_list = self.active_checker.kill_list
 
             # Removing positions from move list, if checker can attack:
             if len(attack_list) > 0:
                 move_list = []
 
             # Highlighting move positions and attack positions:
-            highlight_move()
-            highlight_attack()
+            highlight_move_tiles()
+            highlight_attack_tiles()
 
         arcade.start_render()
 
-        self.board.display(render_checkers=True)
-        if self.checker_selected is not None:
-            display_highlighted_tiles()
+        self.board.display()
+        if self.highlight_checkers_attack or self.highlight_checkers_move:
+            display_highlighted_checkers()
+        else:
+            if self.active_checker is not None:
+                if not self.highlight_checkers_attack or self.highlight_checkers_move:
+                    display_highlighted_tiles()
+        self.board.display_checkers()
 
     def on_key_press(self, symbol: int, modifiers: int):
+
+        def enable_hint():
+            self.highlight_checkers_move = True
+            self.highlight_checkers_attack = True
+
         if symbol == arcade.key.KEY_1:
             self.active_player = 1
         elif symbol == arcade.key.KEY_2:
             self.active_player = 2
+        elif symbol == arcade.key.H:
+            enable_hint()
+
 
     def on_key_release(self, symbol: int, modifiers: int):
-        pass
+
+        def disable_hint():
+            self.highlight_checkers_move = False
+            self.highlight_checkers_attack = False
+
+        if symbol == arcade.key.H:
+            disable_hint()
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
 
         def handle_board_click(coordinates):
 
+            def force_hint():
+                if self.highlight_checkers_move:
+                    self.highlight_checkers_move = False
+                self.highlight_checkers_attack = True
+
+            def select_checker(checker_object):
+                self.active_checker = checker_object
+
+            def deselect_checker():
+                self.active_checker = None
+
+            def assert_player_owns_checker(checker_object):
+                result = False
+                if self.__player_color() == checker_object.color:
+                    result = True
+                return result
+
             def try_moving():
-                if self.checker_selected.can_kill:
+                if self.active_checker.can_kill:
                     try_attacking()
                 else:
                     if self.__player_must_attack():
                         print('Unable to move. You have a checker, that should perform an attack!')
-                        self.checker_selected = None
-                        checkers_to_attack = []
-                        for row in mapping.SURFACE_GRID:
-                            for column in mapping.SURFACE_GRID[row]:
-                                checker = mapping.SURFACE_GRID[row][column]
-                                if checker is not None:
-                                    if (checker.color == 'White' and self.active_player == 1 or
-                                        checker.color == 'Black' and self.active_player == 2):
-                                        if checker.can_kill:
-                                            checkers_to_attack.append(checker)
-                        self.checker_selected = random.choice(checkers_to_attack)
+                        deselect_checker()
+                        force_hint()
                     else:
-                        if clicked_position in self.checker_selected.move_list:
-                            self.checker_selected.move(clicked_position)
+                        if clicked_position in self.active_checker.move_list:
+                            self.active_checker.move(clicked_position)
                             self.__board_update()
                             self.__next_player_turn()
-                            self.checker_selected = None
+                            deselect_checker()
 
             def try_attacking():
-                if clicked_position in self.checker_selected.kill_list:
-                    self.checker_selected.move(clicked_position)
+                if clicked_position in self.active_checker.kill_list:
+                    self.active_checker.move(clicked_position)
                     self.__board_update()
-                    if not self.checker_selected.can_kill:
+                    if not self.active_checker.can_kill:
                         self.__next_player_turn()
-                        self.checker_selected = None
+                        deselect_checker()
 
             if test.coordinates_are_valid(coordinates):
                 if test.coordinates_in_board_boundaries(coordinates):
+                    self.__remove_all_highlights()
                     checker_clicked = get.checker_by_coordinates(coordinates)
                     if checker_clicked is None:
-                        if self.checker_selected is not None:
+                        if self.active_checker is not None:
                             clicked_position = convert.coordinates_to_board_position(coordinates)
-                            if self.checker_selected.can_move or self.checker_selected.can_kill:
+                            if self.active_checker.can_move or self.active_checker.can_kill:
                                 try_moving()
                     else:
-                        if not (self.active_player == 1 and checker_clicked.color.lower() == 'white' or
-                                self.active_player == 2 and checker_clicked.color.lower() == 'black'):
-                            self.checker_selected = None
+                        if not assert_player_owns_checker(checker_clicked):
+                            deselect_checker()
                         else:
-                            if checker_clicked == self.checker_selected:
-                                self.checker_selected = None
+                            if checker_clicked == self.active_checker:
+                                deselect_checker()
                             else:
-                                self.checker_selected = checker_clicked
+                                select_checker(checker_clicked)
 
         def handle_board_click_dev(coordinates):
 
