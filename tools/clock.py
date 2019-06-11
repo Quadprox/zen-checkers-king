@@ -1,26 +1,29 @@
-import time
-import math
+from datetime import datetime
 
 
-def __round(value: float):
-    rounded_value = math.floor(value)
-    return rounded_value
+def get_seconds(datetime_value):
+    converted = datetime.strftime(datetime_value, '%S')
+    return converted
+
+
+def get_minutes(datetime_value):
+    converted = datetime.strftime(datetime_value, '%M')
+    return converted
+
+
+def get_hours(datetime_value):
+    converted = datetime.strftime(datetime_value, '%H')
+    return converted
+
+
+def convert(datetime_value):
+    seconds = get_seconds(datetime_value)
+    minutes = get_minutes(datetime_value)
+    hours = get_hours(datetime_value)
+    converted = [hours, minutes, seconds]
+    return converted
 
 
 def now():
-    current_time = time.time()
-    return current_time
-
-
-def convert(value: float):
-    seconds_in_minute = 60
-    minutes_in_hour = 60
-    seconds = value
-    minutes = seconds // seconds_in_minute
-    seconds = seconds - minutes * seconds_in_minute
-    hours = minutes // minutes_in_hour
-    minutes = minutes - hours * minutes_in_hour
-    proper = [__round(hours),
-              __round(minutes),
-              __round(seconds)]
-    return proper
+    time = datetime.now()
+    return time

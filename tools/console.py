@@ -1,10 +1,11 @@
-from datetime import datetime
+import tools.clock as clock
 
 
 def timestamp():
-    time = datetime.now()
-    timestamp = datetime.strftime(time, '%H:%M:%S')
-    return timestamp
+    time_unrefined = clock.convert(clock.now())
+    hours, minutes, seconds = time_unrefined
+    time = f'{hours}:{minutes}:{seconds}'
+    return time
 
 
 def echo(message: str):
