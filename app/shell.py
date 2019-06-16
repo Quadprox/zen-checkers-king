@@ -131,7 +131,7 @@ class Shell(arcade.Window):
                                                     tile_coord_y=checker_coordinates[1])
                 for move_position in move_list:
                     coordinates = convert.board_position_to_coordinates(conv_position=move_position)
-                    move_position_coord_x, move_position_coord_y = coordinates[0], coordinates[1]
+                    move_position_coord_x, move_position_coord_y = coordinates
                     stamp.board_tile_highlight_move(tile_coord_x=move_position_coord_x,
                                                     tile_coord_y=move_position_coord_y)
 
@@ -142,7 +142,7 @@ class Shell(arcade.Window):
                                                       tile_coord_y=checker_coordinates[1])
                 for attack_position in attack_list:
                     coordinates = convert.board_position_to_coordinates(conv_position=attack_position)
-                    move_position_coord_x, move_position_coord_y = coordinates[0], coordinates[1]
+                    move_position_coord_x, move_position_coord_y = coordinates
                     stamp.board_tile_highlight_attack(tile_coord_x=move_position_coord_x,
                                                       tile_coord_y=move_position_coord_y)
 

@@ -98,8 +98,7 @@ class Checker:
 
     def display(self):
         coordinates = self.coordinates
-        coordinate_x = coordinates[0]
-        coordinate_y = coordinates[1]
+        coordinate_x, coordinate_y = coordinates
         surface.display(
             coord_x=coordinate_x,
             coord_y=coordinate_y,
