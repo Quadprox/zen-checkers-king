@@ -1,11 +1,11 @@
 from app import settings, session
-from tools import pencil, stamp, texture
+from tools.pencil import draw, texture, stamp
 
 
 def __render_opengl():
 
     def render_outer_margin():
-        pencil.square_solid(
+        draw.square_solid(
             sq_coord_x=settings.BOARD_POSITION_X,
             sq_coord_y=settings.BOARD_POSITION_Y,
             sq_side_len=settings.BOARD_SIDE_LEN,
@@ -14,7 +14,7 @@ def __render_opengl():
         )
 
     def render_inner_margin():
-        pencil.square_solid(
+        draw.square_solid(
             sq_coord_x=settings.BOARD_POSITION_X,
             sq_coord_y=settings.BOARD_POSITION_Y,
             sq_side_len=int(settings.BOARD_SIDE_LEN - settings.BOARD_MARGIN_OUTER_LEN * 2),
@@ -50,7 +50,7 @@ def __render_opengl():
                 letter_coord_y = int(settings.BOARD_SIDE_LEN - settings.BOARD_MARGIN_OUTER_LEN / 2)
                 letter_rotation = 180
             for letter in settings.BOARD_LETTER_INDEX:
-                pencil.character(
+                draw.character(
                     char_string=letter,
                     char_coord_x=letter_coord_x,
                     char_coord_y=letter_coord_y,
@@ -74,7 +74,7 @@ def __render_opengl():
                 number_coord_y = int(settings.BOARD_MARGIN_LEN + settings.TILE_SIDE_LEN / 2)
                 number_rotation = 180
             for number in settings.BOARD_NUMBER_INDEX:
-                pencil.character(
+                draw.character(
                     char_string=number,
                     char_coord_x=number_coord_x,
                     char_coord_y=number_coord_y,

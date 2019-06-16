@@ -2,7 +2,7 @@ import arcade
 from app import settings, session
 from app.board import mono as board, convert, test, get, mapping
 from app.checker import spawn
-from tools import stamp
+from tools.pencil import stamp
 
 
 class Shell(arcade.Window):
