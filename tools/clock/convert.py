@@ -9,6 +9,12 @@ def dt_to_list(datetime_value):
     return converted
 
 
+def dt_to_seconds(datetime_value):
+    converted_list = dt_to_list(datetime_value)
+    converted_seconds = list_to_seconds(converted_list)
+    return converted_seconds
+
+
 def list_to_seconds(conv_list: list):
     hours, minutes, seconds = conv_list
     seconds_in_minute = 60
