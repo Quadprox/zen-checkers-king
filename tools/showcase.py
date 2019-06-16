@@ -42,7 +42,7 @@ def board_surface(filled: bool = False):
 
 
 def checker_surface():
-    import tools.stamp as stamp
+    import tools.pencil.stamp as stamp
     import random
 
     __initialize(showcase_object='checker')

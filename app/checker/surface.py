@@ -1,5 +1,5 @@
 import app.session as session
-from tools import stamp, texture
+from tools.pencil import texture, stamp
 
 
 def __render_opengl(coord_x: int, coord_y: int, color: str, queen: bool = False):
