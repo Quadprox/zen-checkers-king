@@ -24,6 +24,7 @@ class Shell(arcade.Window):
 
         self.__dev_mode = session.DEV_MODE
         self.__test_mode = session.TEST_MODE
+        self.__debug_mode = session.DEBUG_MODE
 
         self.active_player = 1                          # 1 = White, 2 = Black;
         self.active_checker = None                      # None, if deselected;
@@ -160,6 +161,9 @@ class Shell(arcade.Window):
 
         arcade.start_render()
 
+        import app.ui.elements.panel as panel
+
+        panel.display()
         self.board.display()
         if self.highlight_checkers_attack or self.highlight_checkers_move:
             display_highlighted_checkers()
@@ -278,7 +282,7 @@ class Shell(arcade.Window):
                     clicked_position = convert.coordinates_to_board_position(coordinates)
 
                     if test.position_can_be_used(clicked_position):
-                        clicked_row, clicked_column = clicked_position[0], clicked_position[1]
+                        clicked_row, clicked_column = clicked_position
                         if checker_clicked is None:
                             spawn_checker()
                         else:
