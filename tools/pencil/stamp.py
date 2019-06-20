@@ -234,3 +234,26 @@ def button(b_coord_x: int, b_coord_y: int, b_size: str, b_caption: str, b_filled
         'small': lambda: __button_small(b_coord_x, b_coord_y, b_caption, b_filled),
     }
     render_button[size]()
+
+
+def clockface(cf_coord_x: int, cf_coord_y: int, cf_value: list):
+    value_list = cf_value
+    if isinstance(cf_value, list):
+        value_list = [23, 59, 59]
+    hours, minutes, seconds = value_list
+    hours = f'{hours}' if hours >= 10 else f'0{hours}'
+    minutes = f'{minutes}' if minutes >= 10 else f'0{minutes}'
+    seconds = f'{seconds}' if seconds >= 10 else f'0{seconds}'
+    cf_time_string = f'{hours}:{minutes}:{seconds}'
+    draw.character(
+        char_string=cf_time_string,
+        char_coord_x=cf_coord_x,
+        char_coord_y=cf_coord_y,
+        char_color=settings.CLOCKFACE_CAPTION_COLOR,
+        char_font_size=settings.CLOCKFACE_CAPTION_FONT_SIZE,
+        char_font_name=settings.CLOCKFACE_CAPTION_FONT_NAME,
+        char_rotation_angle=0,
+        char_font_bold=settings.CLOCKFACE_CAPTION_STYLE_BOLD,
+        char_font_italic=settings.CLOCKFACE_CAPTION_STYLE_ITALIC,
+        char_anchor=True
+    )
