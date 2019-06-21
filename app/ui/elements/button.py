@@ -16,7 +16,7 @@ class Button:
 
     @property
     def caption(self):
-        return self.caption
+        return self.__caption
 
     @property
     def position(self):
@@ -24,8 +24,8 @@ class Button:
 
     @property
     def coordinates(self):
-        position = self.__position
-        conv_coordinates = mapping.BUTTON_GRID_POSITIONS[position]
+        position, align = self.__position
+        conv_coordinates = mapping.BUTTON_GRID_POSITIONS[position][align]
         return conv_coordinates
 
     @property
@@ -36,10 +36,10 @@ class Button:
         return result
 
     def set_caption(self, caption: str):
-        self.__caption = str(caption).capitalize()
+        self.__caption = str(caption).lower()
 
     def set_size(self, size: str):
-        self.__size = str(size).capitalize()
+        self.__size = str(size).lower()
 
     def display(self):
         if self.is_valid:
