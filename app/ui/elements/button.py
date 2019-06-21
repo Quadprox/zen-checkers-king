@@ -24,7 +24,8 @@ class Button:
 
     @property
     def coordinates(self):
-        conv_coordinates = mapping.convert_button_grid_position_to_coordinates(self.__position)
+        position = self.__position
+        conv_coordinates = mapping.BUTTON_GRID_POSITIONS[position]
         return conv_coordinates
 
     @property
