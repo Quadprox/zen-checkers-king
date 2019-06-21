@@ -1,14 +1,12 @@
 from tools.pencil import stamp
+from tools.clock.stopwatch import Stopwatch
 from app.ui import mapping
 
 
 class Clockface:
     def __init__(self):
-        self.stopwatch = None
         self.__position = 1
-
-    def insert(self, stopwatch):
-        self.stopwatch = stopwatch
+        self.stopwatch = Stopwatch()
 
     @property
     def time(self):
