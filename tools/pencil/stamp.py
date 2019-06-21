@@ -238,7 +238,7 @@ def button(b_coord_x: int, b_coord_y: int, b_size: str, b_caption: str, b_filled
 
 def clockface(cf_coord_x: int, cf_coord_y: int, cf_value: list):
     value_list = cf_value
-    if isinstance(cf_value, list):
+    if not isinstance(cf_value, list):
         value_list = [23, 59, 59]
     hours, minutes, seconds = value_list
     hours = f'{hours}' if hours >= 10 else f'0{hours}'
