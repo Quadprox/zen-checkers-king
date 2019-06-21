@@ -187,7 +187,7 @@ def __button_large(b_coord_x: int, b_coord_y: int, b_caption: str, b_filled: boo
         char_color=settings.BUTTON_CAPTION_COLOR,
         char_font_size=settings.BUTTON_CAPTION_FONT_SIZE,
         char_font_name=settings.BUTTON_CAPTION_FONT_NAME,
-        char_rotation_angle=12 if b_filled else 0,
+        char_rotation_angle=6 if b_filled else 0,
         char_font_bold=settings.BUTTON_CAPTION_STYLE_BOLD,
         char_font_italic=settings.BUTTON_CAPTION_STYLE_ITALIC,
         char_anchor=True
@@ -220,7 +220,7 @@ def __button_small(b_coord_x: int, b_coord_y: int, b_caption: str, b_filled: boo
         char_color=settings.BUTTON_CAPTION_COLOR,
         char_font_size=settings.BUTTON_CAPTION_FONT_SIZE,
         char_font_name=settings.BUTTON_CAPTION_FONT_NAME,
-        char_rotation_angle=12 if b_filled else 0,
+        char_rotation_angle=6 if b_filled else 0,
         char_font_bold=settings.BUTTON_CAPTION_STYLE_BOLD,
         char_font_italic=settings.BUTTON_CAPTION_STYLE_ITALIC,
         char_anchor=True
@@ -252,8 +252,22 @@ def clockface(cf_coord_x: int, cf_coord_y: int, cf_value: list):
         char_color=settings.CLOCKFACE_CAPTION_COLOR,
         char_font_size=settings.CLOCKFACE_CAPTION_FONT_SIZE,
         char_font_name=settings.CLOCKFACE_CAPTION_FONT_NAME,
-        char_rotation_angle=0,
         char_font_bold=settings.CLOCKFACE_CAPTION_STYLE_BOLD,
         char_font_italic=settings.CLOCKFACE_CAPTION_STYLE_ITALIC,
+        char_rotation_angle=0,
         char_anchor=True
+    )
+
+
+def div(div_coord_x: int, div_coord_y: int):
+    div_start_x = int(div_coord_x - settings.DIVIDER_LENGTH / 2)
+    div_end_x = int(div_coord_x + settings.DIVIDER_LENGTH / 2)
+    div_start_y, div_end_y = div_coord_y, div_coord_y
+    draw.line(
+        line_start_x=div_start_x,
+        line_start_y=div_start_y,
+        line_end_x=div_end_x,
+        line_end_y=div_end_y,
+        line_color=settings.DIVIDER_COLOR,
+        line_width=settings.DIVIDER_WIDTH
     )
