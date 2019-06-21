@@ -3,10 +3,10 @@ from app.ui import mapping
 
 
 class Button:
-    def __init__(self, init_caption: str, init_position: list, init_size: str, init_filled: bool = False):
-        self.__caption = init_caption
+    def __init__(self,init_position: list, init_filled: bool = False):
+        self.__caption = None
+        self.__size = None
         self.__position = init_position
-        self.__size = init_size
         
         self.filled = init_filled
 
@@ -24,15 +24,78 @@ class Button:
 
     @property
     def coordinates(self):
-        conv_coordinates = mapping.convert_grid_position_to_coordinates(self.__position)
+        position = self.__position
+        conv_coordinates = mapping.BUTTON_GRID_POSITIONS[position]
         return conv_coordinates
 
+    @property
+    def is_valid(self):
+        result = True
+        if self.caption is None or self.size is None:
+            result = False
+        return result
+
+    def set_caption(self, caption: str):
+        self.__caption = str(caption).capitalize()
+
+    def set_size(self, size: str):
+        self.__size = str(size).capitalize()
+
     def display(self):
-        coordinate_x, coordinate_y = self.coordinates
-        stamp.button(
-            b_coord_x=coordinate_x,
-            b_coord_y=coordinate_y,
-            b_size=self.size,
-            b_caption=self.caption,
-            b_filled=self.filled
-        )
+        if self.is_valid:
+            coordinate_x, coordinate_y = self.coordinates
+            stamp.button(
+                b_coord_x=coordinate_x,
+                b_coord_y=coordinate_y,
+                b_size=self.size,
+                b_caption=self.caption,
+                b_filled=self.filled
+            )
+
+
+class StartButton(Button):
+    def __init__(self, init_position: list, init_filled: bool = False):
+        super().__init__(init_position, init_filled)
+        self.set_caption('Start')
+
+
+class SettingsButton(Button):
+    def __init__(self, init_position: list, init_filled: bool = False):
+        super().__init__(init_position, init_filled)
+        self.set_caption('Settings')
+
+
+class QuitButton(Button):
+    def __init__(self, init_position: list, init_filled: bool = False):
+        super().__init__(init_position, init_filled)
+        self.set_caption('Quit')
+
+
+class PauseButton(Button):
+    def __init__(self, init_position: list, init_filled: bool = False):
+        super().__init__(init_position, init_filled)
+        self.set_caption('Pause')
+
+
+class RestartButton(Button):
+    def __init__(self, init_position: list, init_filled: bool = False):
+        super().__init__(init_position, init_filled)
+        self.set_caption('Restart')
+
+
+class EndCurrentButton(Button):
+    def __init__(self, init_position: list, init_filled: bool = False):
+        super().__init__(init_position, init_filled)
+        self.set_caption('End game')
+
+
+class HintButton(Button):
+    def __init__(self, init_position: list, init_filled: bool = False):
+        super().__init__(init_position, init_filled)
+        self.set_caption('Hint')
+
+
+class UndoButton(Button):
+    def __init__(self, init_position: list, init_filled: bool = False):
+        super().__init__(init_position, init_filled)
+        self.set_caption('Undo')
