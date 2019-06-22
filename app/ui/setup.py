@@ -42,12 +42,12 @@ def build_end_current_confirmation():
 
 
 def build_game_won():
-    collection = [button.MainMenuButton(init_position=[4, 0]),
+    collection = [button.ContinueButton(init_position=[4, 0]),
                   button.QuitButton(init_position=[5, 0])]
     return collection
 
 
 def build_game_lost():
-    collection = [button.MainMenuButton(init_position=[4, 0]),
+    collection = [button.ContinueButton(init_position=[4, 0]),
                   button.QuitButton(init_position=[5, 0])]
     return collection
