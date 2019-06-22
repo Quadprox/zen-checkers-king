@@ -49,6 +49,26 @@ def board_tile_highlight_attack(tile_coord_x: int, tile_coord_y: int):
     )
 
 
+def checker_higlight_move(ch_coord_x: int, ch_coord_y: int):
+    draw.square_solid(
+        sq_coord_x=ch_coord_x,
+        sq_coord_y=ch_coord_y,
+        sq_side_len=settings.TILE_HIGHLIGHT_SIDE_LEN,
+        sq_color=settings.TILE_HIGHLIGHT_COLOR_MOVE,
+        sq_tilt=False
+    )
+
+
+def checker_higlight_attack(ch_coord_x: int, ch_coord_y: int):
+    draw.square_solid(
+        sq_coord_x=ch_coord_x,
+        sq_coord_y=ch_coord_y,
+        sq_side_len=settings.TILE_HIGHLIGHT_SIDE_LEN,
+        sq_color=settings.TILE_HIGHLIGHT_COLOR_ATTACK,
+        sq_tilt=False
+    )
+
+
 def __checker_complex_queen_index(ch_coord_x: int, ch_coord_y: int, ch_color: str):
     draw.character(
         char_string='Q',

@@ -38,7 +38,8 @@ class Shell(arcade.Window):
         self.game_running = False
         self.game_paused = False
 
-    def setup(self):
+    @staticmethod
+    def setup():
         # Shell specific setup:
         pass
 
@@ -107,15 +108,15 @@ class Shell(arcade.Window):
                 for checker in checkers_attack_list:
                     if checker.color == self.__player_color():
                         coordinates = checker.coordinates
-                        stamp.board_tile_highlight_attack(tile_coord_x=coordinates[0],
-                                                          tile_coord_y=coordinates[1])
+                        stamp.checker_higlight_attack(ch_coord_x=coordinates[0],
+                                                      ch_coord_y=coordinates[1])
 
             def highlight_moves():
                 for checker in checkers_move_list:
                     if checker.color == self.__player_color():
                         coordinates = checker.coordinates
-                        stamp.board_tile_highlight_move(tile_coord_x=coordinates[0],
-                                                        tile_coord_y=coordinates[1])
+                        stamp.checker_higlight_move(ch_coord_x=coordinates[0],
+                                                    ch_coord_y=coordinates[1])
 
             checkers_move_list = get.checkers_that_can_move()
             checkers_attack_list = get.checkers_that_can_attack()
@@ -134,8 +135,8 @@ class Shell(arcade.Window):
             def highlight_move_tiles():
                 if self.active_checker.can_move and not self.active_checker.can_kill:
                     checker_coordinates = self.active_checker.coordinates
-                    stamp.board_tile_highlight_move(tile_coord_x=checker_coordinates[0],
-                                                    tile_coord_y=checker_coordinates[1])
+                    stamp.checker_higlight_move(ch_coord_x=checker_coordinates[0],
+                                                ch_coord_y=checker_coordinates[1])
                 for move_position in move_list:
                     coordinates = convert.board_position_to_coordinates(conv_position=move_position)
                     move_position_coord_x, move_position_coord_y = coordinates
@@ -145,8 +146,8 @@ class Shell(arcade.Window):
             def highlight_attack_tiles():
                 if self.active_checker.can_kill:
                     checker_coordinates = self.active_checker.coordinates
-                    stamp.board_tile_highlight_attack(tile_coord_x=checker_coordinates[0],
-                                                      tile_coord_y=checker_coordinates[1])
+                    stamp.checker_higlight_attack(ch_coord_x=checker_coordinates[0],
+                                                  ch_coord_y=checker_coordinates[1])
                 for attack_position in attack_list:
                     coordinates = convert.board_position_to_coordinates(conv_position=attack_position)
                     move_position_coord_x, move_position_coord_y = coordinates
