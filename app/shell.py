@@ -2,7 +2,8 @@ import arcade
 from app import settings, session
 from app.board import mono as board, convert, test, get, mapping
 from app.checker import spawn
-from app.ui import mono as ui
+from app.ui import mono as ui, click
+from app.ui.elements.button import Button
 from tools.pencil import stamp
 
 
@@ -39,8 +40,8 @@ class Shell(arcade.Window):
 
 
     def setup(self):
-        self.__board_reset()
-        self.ui.set_mode(mode=0)
+        # Shell specific setup:
+        pass
 
         # Arcade preload functions:
         arcade.set_background_color(color=settings.GAME_WINDOW_BACKGROUND_COLOR)
@@ -92,94 +93,6 @@ class Shell(arcade.Window):
 
     def __board_update(self):
         self.board.update()
-
-    def __ui_switch_mode(self, mode: int):
-
-        def end_current_game():
-            self.__board_reset()
-            self.__board_update()
-            self.active_player = 1
-            self.ui.clockface.stopwatch.reset()
-            if self.game_running:
-                self.game_running = False
-
-        def restart_game():
-            end_current_game()
-            self.ui.clockface.stopwatch.start()
-            if not self.game_running:
-                self.game_running = True
-            if self.game_paused:
-                self.game_paused = False
-
-        # Main menu
-        if self.ui.active_mode == 0:
-
-            # --> Active game (start new):
-            if mode == 2:
-                end_current_game()
-                self.ui.clockface.stopwatch.start()
-                if not self.game_running:
-                    self.game_running = True
-
-            # --> Game won:
-            elif mode == 6:
-                end_current_game()
-
-            # --> Game lost:
-            elif mode == 7:
-                end_current_game()
-
-            # --> Quit:
-            elif mode == -1:
-                quit()
-
-        # Settings menu:
-        elif self.ui.active_mode == 1:
-            pass
-
-        # Active game:
-        elif self.ui.active_mode == 2:
-
-            # --> Pause menu:
-            if mode == 3:
-                if not self.game_paused:
-                    self.game_paused = True
-                self.ui.clockface.stopwatch.pause()
-
-        # Pause menu:
-        elif self.ui.active_mode == 3:
-
-            # --> Active game (unpause):
-            if mode == 2:
-                if self.game_paused:
-                    self.game_paused = False
-                self.ui.clockface.stopwatch.unpause()
-
-        # Start new game menu confirmation:
-        elif self.ui.active_mode == 4:
-
-            # --> Active game (start new):
-            if mode == 2:
-                restart_game()
-
-        # End current game menu confirmation:
-        elif self.ui.active_mode == 5:
-
-            # --> Game lost (end current):
-            if mode == 7:
-                end_current_game()
-
-        # Game won:
-        elif self.ui.active_mode == 6:
-            pass
-
-        # Game won
-        elif self.ui.active_mode == 7:
-            pass
-
-        self.ui.set_mode(mode)
-
-
 
     def on_draw(self):
 
@@ -270,30 +183,97 @@ class Shell(arcade.Window):
 
     def on_key_press(self, symbol: int, modifiers: int):
 
+        def start_game():
+            self.game_running = True
+            self.game_paused = False
+            self.__board_reset()
+            self.active_player = 1
+            self.ui.show_clockface()
+            self.ui.clockface.stopwatch.start()
+
+        def restart_game():
+            self.ui.clockface.stopwatch.stop()
+            self.ui.clockface.stopwatch.reset()
+            start_game()
+
+        def stop_game():
+            self.game_running = False
+            self.game_paused = False
+            self.active_player = 1
+
         def enable_hint():
             self.highlight_checkers_move = True
             self.highlight_checkers_attack = True
 
-        if symbol == arcade.key.KEY_0:
-            self.__ui_switch_mode(mode=0)
-        elif symbol == arcade.key.KEY_1:
-            self.__ui_switch_mode(mode=1)
-        elif symbol == arcade.key.KEY_2:
-            self.__ui_switch_mode(mode=2)
-        elif symbol == arcade.key.KEY_3:
-            self.__ui_switch_mode(mode=3)
-        elif symbol == arcade.key.KEY_4:
-            self.__ui_switch_mode(mode=4)
-        elif symbol == arcade.key.KEY_5:
-            self.__ui_switch_mode(mode=5)
-        elif symbol == arcade.key.KEY_6:
-            self.__ui_switch_mode(mode=6)
-        elif symbol == arcade.key.KEY_7:
-            self.__ui_switch_mode(mode=7)
 
-        elif symbol == arcade.key.H:
-            enable_hint()
+        # Main menu:
+        if self.ui.active_mode == 0:
+            if symbol == arcade.key.SPACE:
+                self.ui.set_mode(mode=2)
+                start_game()
+            elif symbol == arcade.key.ESCAPE:
+                quit()      # TODO: Quit confirmation menu
 
+        # Settings menu:
+        elif self.ui.active_mode == 1:
+            if symbol == arcade.key.ESCAPE:
+                if not self.game_running:
+                    self.ui.set_mode(mode=0)
+                else:
+                    self.ui.set_mode(mode=3)
+
+        # Active game mode:
+        elif self.ui.active_mode == 2:
+            if symbol == arcade.key.H:
+                enable_hint()
+            elif symbol == arcade.key.ESCAPE:
+                self.game_paused = True
+                self.ui.clockface.stopwatch.pause()
+                self.ui.set_mode(mode=3)
+
+        # Paused game mode:
+        elif self.ui.active_mode == 3:
+            if symbol == arcade.key.ESCAPE:
+                if self.game_paused:
+                    self.game_paused = False
+                self.ui.clockface.stopwatch.unpause()
+                self.ui.set_mode(mode=2)
+
+        # Start new game confirmation menu:
+        elif self.ui.active_mode == 4:
+            if symbol == arcade.key.SPACE:
+                restart_game()
+                self.ui.set_mode(mode=2)
+            elif symbol == arcade.key.ESCAPE:
+                self.ui.set_mode(mode=3)
+
+        # End current game confirmation menu:
+        elif self.ui.active_mode == 5:
+            if symbol == arcade.key.SPACE:
+                stop_game()
+                self.ui.set_mode(mode=7)
+            elif symbol == arcade.key.ESCAPE:
+                self.ui.set_mode(mode=3)
+
+        # Game results (Game won):
+        elif self.ui.active_mode == 6:
+            if symbol == arcade.key.SPACE:
+                self.ui.clockface.stopwatch.stop()
+                self.ui.clockface.stopwatch.reset()
+                self.ui.hide_clockface()
+                self.ui.set_mode(mode=0)
+            elif symbol == arcade.key.ESCAPE:
+                quit()      # TODO: Quit confirmation menu
+
+        # Game results (Game lost/force end):
+        elif self.ui.active_mode == 7:
+            if symbol == arcade.key.SPACE:
+                self.ui.clockface.stopwatch.stop()
+                self.ui.clockface.stopwatch.reset()
+                self.ui.hide_clockface()
+                self.ui.set_mode(mode=0)
+            elif symbol == arcade.key.ESCAPE:
+                quit()  # TODO: Quit confirmation menu
 
     def on_key_release(self, symbol: int, modifiers: int):
 
@@ -406,22 +386,142 @@ class Shell(arcade.Window):
                                     promote_checker(checker_clicked)
                         self.board.update()
 
+        def handle_panel_click(coordinates):
+
+            def start_game():
+                self.game_running = True
+                self.game_paused = False
+                self.__board_reset()
+                self.active_player = 1
+                self.ui.show_clockface()
+                self.ui.clockface.stopwatch.start()
+
+            def restart_game():
+                self.ui.clockface.stopwatch.stop()
+                self.ui.clockface.stopwatch.reset()
+                start_game()
+
+            def stop_game():
+                self.game_running = False
+                self.game_paused = False
+                self.active_player = 1
+
+            def show_hint():
+                if not self.highlight_checkers_move:
+                    self.highlight_checkers_move = True
+                if not self.highlight_checkers_attack:
+                    self.highlight_checkers_attack = True
+
+            def hide_hint():
+                if self.highlight_checkers_move:
+                    self.highlight_checkers_move = False
+                if self.highlight_checkers_attack:
+                    self.highlight_checkers_attack = False
+
+            def hint_enabled():
+                hint_status = False
+                if self.highlight_checkers_move and self.highlight_checkers_attack:
+                    hint_status = True
+                return hint_status
+
+            for ui_element in self.ui.collection[self.ui.active_mode]:
+                if isinstance(ui_element, Button):
+                    if click.coordinates_in_button_boundaries(coordinates, ui_element):
+
+                        # Main menu:
+                        if self.ui.active_mode == 0:
+                            if ui_element.ID == settings.BUTTON_ID_START_GAME:
+                                self.ui.set_mode(mode=2)
+                                start_game()
+                            elif ui_element.ID == settings.BUTTON_ID_SETTINGS:
+                                self.ui.set_mode(mode=1)
+                            elif ui_element.ID == settings.BUTTON_ID_QUIT:
+                                quit()
+
+                        # Settings menu:
+                        elif self.ui.active_mode == 1:
+                            if ui_element.ID == settings.BUTTON_ID_BACK:
+                                if not self.game_running:
+                                    self.ui.set_mode(mode=0)
+                                else:
+                                    self.ui.set_mode(mode=3)
+
+                        # Active game mode:
+                        elif self.ui.active_mode == 2:
+                            if ui_element.ID == settings.BUTTON_ID_PAUSE:
+                                self.game_paused = True
+                                self.ui.clockface.stopwatch.pause()
+                                self.ui.set_mode(mode=3)
+                            elif ui_element.ID == settings.BUTTON_ID_HINT:
+                                if hint_enabled():
+                                    hide_hint()
+                                else:
+                                    show_hint()
+                            elif ui_element.ID == settings.BUTTON_ID_UNDO:
+                                pass # TODO: Add undo function:
+
+                        # Paused game mode:
+                        elif self.ui.active_mode == 3:
+                            if ui_element.ID == settings.BUTTON_ID_RESUME:
+                                if self.game_paused:
+                                    self.game_paused = False
+                                self.ui.clockface.stopwatch.unpause()
+                                self.ui.set_mode(mode=2)
+                            elif ui_element.ID == settings.BUTTON_ID_RESTART_GAME:
+                                self.ui.set_mode(mode=4)
+                            elif ui_element.ID == settings.BUTTON_ID_SETTINGS:
+                                self.ui.set_mode(mode=1)
+                            elif ui_element.ID == settings.BUTTON_ID_MAIN_MENU:
+                                self.ui.set_mode(mode=5)
+                            elif ui_element.ID == settings.BUTTON_ID_QUIT:
+                                quit()
+
+                        # Start new game confirmation menu:
+                        elif self.ui.active_mode == 4:
+                            if ui_element.ID == settings.BUTTON_ID_YES:
+                                restart_game()
+                                self.ui.set_mode(mode=2)
+                            elif ui_element.ID == settings.BUTTON_ID_NO:
+                                self.ui.set_mode(mode=3)
+
+                        # End current game confirmation menu:
+                        elif self.ui.active_mode == 5:
+                            if ui_element.ID == settings.BUTTON_ID_YES:
+                                stop_game()
+                                self.ui.set_mode(mode=7)
+                            elif ui_element.ID == settings.BUTTON_ID_NO:
+                                self.ui.set_mode(mode=3)
+
+                        # Game results (Game won):
+                        elif self.ui.active_mode == 6:
+                            if ui_element.ID == settings.BUTTON_ID_CONTINUE:
+                                self.ui.clockface.stopwatch.stop()
+                                self.ui.clockface.stopwatch.reset()
+                                self.ui.hide_clockface()
+                                self.ui.set_mode(mode=0)
+                            elif ui_element.ID == settings.BUTTON_ID_QUIT:
+                                quit()
+
+                        # Game results (Game lost/force end):
+                        elif self.ui.active_mode == 7:
+                            if ui_element.ID == settings.BUTTON_ID_CONTINUE:
+                                self.ui.clockface.stopwatch.stop()
+                                self.ui.clockface.stopwatch.reset()
+                                self.ui.hide_clockface()
+                                self.ui.set_mode(mode=0)
+                            elif ui_element.ID == settings.BUTTON_ID_QUIT:
+                                quit()
+
         click_coordinates = [x, y]
 
-        # Board surface clicked:
         if test.coordinates_in_board_boundaries(click_coordinates):
             if button == arcade.MOUSE_BUTTON_LEFT:
-
-                # Checking if game is running and not paused to process the click command:
                 if self.game_running and not self.game_paused:
                     handle_board_click(click_coordinates)
-
             else:
                 handle_board_click_dev(click_coordinates)
-
-        # UI panel clicked:
         else:
-            pass
+            handle_panel_click(click_coordinates)
 
     def update(self, delta_time: float):
         pass
