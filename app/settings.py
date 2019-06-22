@@ -3,7 +3,7 @@ import os
 
 # General project information and directories:
 PROJECT_NAME = 'Zen Checkers King'
-PROJECT_APP_VERSION = '0.6.5'
+PROJECT_APP_VERSION = '0.6.52'
 PROJECT_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_APP_DIR = os.path.dirname(__file__)
 PROJECT_TOOLS_DIR = os.path.join(PROJECT_DIR, 'tools')
@@ -112,6 +112,7 @@ BUTTON_ID_NO = 'NoButton'
 BUTTON_ID_PAUSE = 'PauseButton'
 BUTTON_ID_RESUME = 'ResumeButton'
 BUTTON_ID_BACK = 'BackButton'
+BUTTON_ID_CONTINUE = 'ContinueButton'
 
 # Clockface surface settings:
 CLOCKFACE_CAPTION_COLOR = TILE_COLOR_BLACK
