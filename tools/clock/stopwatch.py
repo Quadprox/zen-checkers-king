@@ -5,6 +5,7 @@ class Stopwatch:
 
     def __init__(self):
         self.running = False
+        self.paused = False
 
         # Protected attributes to store and reset session / game values
         self.__started = None
@@ -18,9 +19,11 @@ class Stopwatch:
         self.__started = clock.now(formatted=False)
 
     def pause(self):
+        self.paused = True
         self.__paused = clock.now(formatted=False)
 
     def unpause(self):
+        self.paused = False
         self.__resumed = clock.now(formatted=False)
         seconds_paused = difference.dt(dt_start=self.__paused,
                                        dt_end=self.__resumed)
@@ -31,6 +34,7 @@ class Stopwatch:
     def stop(self):
         self.__stopped = clock.now(formatted=False)
         self.running = False
+        self.paused = False
 
     def reset(self):
         if self.running:
@@ -44,10 +48,15 @@ class Stopwatch:
     def elapsed(self):
         if self.__started is not None:
             start_time = self.__started
+            pause_time = self.__paused
             end_time = self.__stopped
             if self.running:
                 end_time = clock.now(formatted=False)
-            unskipped_time = difference.dt(dt_start=start_time, dt_end=end_time)
-            final_time = unskipped_time - self.__skip
-            final_time_formatted = convert.seconds_to_list(final_time)
+            if not self.paused:
+                unskipped_time = difference.dt(dt_start=start_time, dt_end=end_time)
+                final_time = unskipped_time - self.__skip
+                final_time_formatted = convert.seconds_to_list(final_time)
+            else:
+                final_time = difference.dt(dt_start=start_time, dt_end=pause_time) - self.__skip
+                final_time_formatted = convert.seconds_to_list(final_time)
             return final_time_formatted
