@@ -1,5 +1,6 @@
 from app import settings
 
+
 CLOCKFACE_POSITIONS = {
     1: [settings.CLOCKFACE_POSITION_X, settings.CLOCKFACE_POSITION_Y],      # Default position
     2: [0, 0]                                                               # Alternative position

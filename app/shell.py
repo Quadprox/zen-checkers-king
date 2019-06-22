@@ -39,10 +39,8 @@ class Shell(arcade.Window):
 
 
     def setup(self):
-
         self.__board_reset()
-        self.ui.initialize()
-        self.ui.set_mode(mode=2)
+        self.ui.set_mode(mode=0)
 
         # Arcade preload functions:
         arcade.set_background_color(color=settings.GAME_WINDOW_BACKGROUND_COLOR)
@@ -276,10 +274,22 @@ class Shell(arcade.Window):
             self.highlight_checkers_move = True
             self.highlight_checkers_attack = True
 
-        if symbol == arcade.key.KEY_1:
-            self.active_player = 1
+        if symbol == arcade.key.KEY_0:
+            self.__ui_switch_mode(mode=0)
+        elif symbol == arcade.key.KEY_1:
+            self.__ui_switch_mode(mode=1)
         elif symbol == arcade.key.KEY_2:
-            self.active_player = 2
+            self.__ui_switch_mode(mode=2)
+        elif symbol == arcade.key.KEY_3:
+            self.__ui_switch_mode(mode=3)
+        elif symbol == arcade.key.KEY_4:
+            self.__ui_switch_mode(mode=4)
+        elif symbol == arcade.key.KEY_5:
+            self.__ui_switch_mode(mode=5)
+        elif symbol == arcade.key.KEY_6:
+            self.__ui_switch_mode(mode=6)
+        elif symbol == arcade.key.KEY_7:
+            self.__ui_switch_mode(mode=7)
 
         elif symbol == arcade.key.H:
             enable_hint()
