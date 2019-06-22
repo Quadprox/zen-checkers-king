@@ -15,6 +15,8 @@ class UI:
                            6: setup.build_game_won(),                       # Game statistics UI (game won)
                            7: setup.build_game_lost()}                      # Game statistics UI (game lost)
 
+        self.__show_clockface = False
+
     def reset_clockface(self):
         self.clockface.stopwatch.reset()
 
@@ -25,8 +27,15 @@ class UI:
     def set_mode(self, mode: int):
         self.__mode = mode
 
+    def hide_clockface(self):
+        self.__show_clockface = False
+
+    def show_clockface(self):
+        self.__show_clockface = True
+
     def display(self):
         panel.display()
         for stored in self.collection[self.__mode]:
             stored.display()
-        self.clockface.display()
+        if self.__show_clockface:
+            self.clockface.display()
