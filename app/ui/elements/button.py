@@ -9,8 +9,8 @@ class Button:
 
     def __init__(self,init_position: list, init_filled: bool = False):
         self.__caption = None
-        self.__size = None
         self.__position = init_position
+        self.__size = 'large' if init_position[1] == 0 else 'small'
         
         self.filled = init_filled
 
@@ -40,10 +40,7 @@ class Button:
         return result
 
     def set_caption(self, caption: str):
-        self.__caption = str(caption).lower()
-
-    def set_size(self, size: str):
-        self.__size = str(size).lower()
+        self.__caption = str(caption).upper()
 
     def display(self):
         if self.is_valid:
@@ -85,6 +82,13 @@ class PauseButton(Button):
         self.set_caption('Pause')
 
 
+class ResumeButton(Button):
+    ID = settings.BUTTON_ID_RESUME
+    def __init__(self, init_position: list, init_filled: bool = False):
+        super().__init__(init_position, init_filled)
+        self.set_caption('Resume')
+
+
 class RestartButton(Button):
     ID = settings.BUTTON_ID_RESTART_GAME
     def __init__(self, init_position: list, init_filled: bool = False):
@@ -92,18 +96,18 @@ class RestartButton(Button):
         self.set_caption('Restart')
 
 
-class EndCurrentButton(Button):
-    ID = settings.BUTTON_ID_END_CONFIRM
+class YesButton(Button):
+    ID = settings.BUTTON_ID_YES
     def __init__(self, init_position: list, init_filled: bool = False):
         super().__init__(init_position, init_filled)
-        self.set_caption('End game')
+        self.set_caption('Yes')
 
 
-class StartNewButton(Button):
-    ID = settings.BUTTON_ID_END_CONFIRM
+class NoButton(Button):
+    ID = settings.BUTTON_ID_NO
     def __init__(self, init_position: list, init_filled: bool = False):
         super().__init__(init_position, init_filled)
-        self.set_caption('Start new')
+        self.set_caption('No')
 
 
 class HintButton(Button):
@@ -125,3 +129,10 @@ class BackButton(Button):
     def __init__(self, init_position: list, init_filled: bool = False):
         super().__init__(init_position, init_filled)
         self.set_caption('Back')
+
+
+class MainMenuButton(Button):
+    ID = settings.BUTTON_ID_MAIN_MENU
+    def __init__(self, init_position: list, init_filled: bool = False):
+        super().__init__(init_position, init_filled)
+        self.set_caption('Main Menu')
