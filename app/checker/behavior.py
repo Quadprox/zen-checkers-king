@@ -1,4 +1,5 @@
-from app.board import get, test, mapping
+from app.board import get, test, mapping, convert
+from tools import console
 
 
 POINTER_POS_CHECKER = None
@@ -95,10 +96,21 @@ def get_move_list(checker_object):
 
 
 def move(checker_object, new_position):
+    console.echo(
+        message='{checker} moved from {old_position} to {new_position}'.format(
+            checker=checker_object,
+            old_position=convert.board_position_to_alphanumeric_index(checker_object.position),
+            new_position=convert.board_position_to_alphanumeric_index(new_position)),
+        level=1)
     tiles_between = __between(old_position=checker_object.position,
                               new_position=new_position)
     if len(tiles_between) > 0:
         for position in tiles_between:
+            console.echo(
+                message='Removed {checker} from {position}'.format(
+                    checker=str(get.checker_by_position(check_position=position)).lower(),
+                    position=convert.board_position_to_alphanumeric_index(conv_position=position)),
+                level=2)
             row, column = position[0], position[1]
             mapping.SURFACE_GRID[row][column] = None
 

@@ -26,10 +26,9 @@ class Checker:
         self.__update_id()                  # Updates checker class object's ID value (unique)
 
     def __str__(self):
-        checker_information = '{color} {checker} at {index}'.format(
+        checker_information = '{color} {checker}'.format(
             color=self.color,
             checker="checker (queen)" if self.queen else "checker",
-            index=self.index
         )
         return checker_information
 
