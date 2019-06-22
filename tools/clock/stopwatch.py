@@ -34,6 +34,7 @@ class Stopwatch:
     def stop(self):
         self.__stopped = clock.now(formatted=False)
         self.running = False
+        self.paused = False
 
     def reset(self):
         if self.running:
