@@ -1,4 +1,5 @@
 from tools.pencil import stamp
+from tools import console
 from app.ui import mapping
 from app import settings
 
@@ -13,6 +14,9 @@ class Button:
         self.__size = 'large' if init_position[1] == 0 else 'small'
         
         self.filled = init_filled
+
+    def __str__(self):
+        return f'UI element ({self.size} button \"{self.caption}\")'
 
     @property
     def size(self):

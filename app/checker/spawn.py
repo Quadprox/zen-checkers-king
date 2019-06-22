@@ -1,4 +1,6 @@
-import app.checker.mono as mono
+from app.checker import mono
+from app.board import convert
+from tools import console
 
 
 def __checker_predefined(spawn_position: list, spawn_color: str, spawn_queen: bool = False):
@@ -18,6 +20,12 @@ def __checker_undefined(spawn_position: list):
 
 def checker(spawn_position: list, spawn_color: str, spawn_queen: bool = False):
     if spawn_color in ('White', 'Black'):
-        return __checker_predefined(spawn_position, spawn_color, spawn_queen)
+        spawned_checker = __checker_predefined(spawn_position, spawn_color, spawn_queen)
     else:
-        return __checker_undefined(spawn_position)
+        spawned_checker = __checker_undefined(spawn_position)
+    console.echo(
+        message='Spawned {checker} at {position}'.format(
+            checker=spawned_checker,
+            position=convert.board_position_to_alphanumeric_index(conv_position=spawn_position)),
+        level=2)
+    return spawned_checker

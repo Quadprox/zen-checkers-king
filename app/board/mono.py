@@ -1,4 +1,5 @@
 from app.board import surface, mapping
+from tools import console
 
 
 class Board:
@@ -8,10 +9,16 @@ class Board:
 
     @staticmethod
     def clear():
+        console.echo(
+            message='Cleared board surface',
+            level=1)
         mapping.clear()
 
     @staticmethod
     def fill():
+        console.echo(
+            message='Filling board surface with checker objects...',
+            level=1)
         mapping.fill()
 
     @staticmethod

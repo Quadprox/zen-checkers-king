@@ -1,5 +1,6 @@
-from app.ui.elements import panel, clockface
-from app.ui import setup
+from app.ui.elements import panel, clockface, button
+from app.ui import setup, mapping
+from tools import console
 
 
 class UI:
@@ -20,6 +21,19 @@ class UI:
 
         self.__show_clockface = False
 
+        console.echo(
+            message='Initialized UI',
+            level=1)
+        for preset in self.collection:
+            preset_name = mapping.PRESET_NAMES[preset]
+            for ui_element in self.collection[preset]:
+                console.echo(
+                    message='Created {object} {position} {collection}'.format(
+                        object=ui_element,
+                        position=f'at {ui_element.position}' if isinstance(ui_element, button.Button) else '',
+                        collection=f'at {preset_name}'),
+                    level=2)
+
     def reset_clockface(self):
         self.clockface.stopwatch.reset()
 
@@ -34,6 +48,10 @@ class UI:
     def set_mode(self, mode: int):
         self.__prev = self.__mode
         self.__mode = mode
+        console.echo(
+            message='Switching to {mode}...'.format(
+                mode=mapping.PRESET_NAMES[mode]),
+            level=3)
 
     def hide_clockface(self):
         self.__show_clockface = False
