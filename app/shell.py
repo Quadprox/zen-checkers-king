@@ -38,7 +38,6 @@ class Shell(arcade.Window):
         self.game_running = False
         self.game_paused = False
 
-
     def setup(self):
         # Shell specific setup:
         pass
@@ -212,7 +211,7 @@ class Shell(arcade.Window):
                 self.ui.set_mode(mode=2)
                 start_game()
             elif symbol == arcade.key.ESCAPE:
-                quit()      # TODO: Quit confirmation menu
+                self.ui.set_mode(mode=8)
 
         # Settings menu:
         elif self.ui.active_mode == 1:
@@ -263,7 +262,7 @@ class Shell(arcade.Window):
                 self.ui.hide_clockface()
                 self.ui.set_mode(mode=0)
             elif symbol == arcade.key.ESCAPE:
-                quit()      # TODO: Quit confirmation menu
+                self.ui.set_mode(mode=8)
 
         # Game results (Game lost/force end):
         elif self.ui.active_mode == 7:
@@ -273,7 +272,15 @@ class Shell(arcade.Window):
                 self.ui.hide_clockface()
                 self.ui.set_mode(mode=0)
             elif symbol == arcade.key.ESCAPE:
-                quit()  # TODO: Quit confirmation menu
+                self.ui.set_mode(mode=8)
+
+        # Quit confirmation menu:
+        elif self.ui.active_mode == 8:
+            if symbol == arcade.key.SPACE:
+                quit()
+            elif symbol == arcade.key.ESCAPE:
+                prev_mode = self.ui.previous_mode
+                self.ui.set_mode(mode=prev_mode)
 
     def on_key_release(self, symbol: int, modifiers: int):
 
@@ -436,7 +443,7 @@ class Shell(arcade.Window):
                             elif ui_element.ID == settings.BUTTON_ID_SETTINGS:
                                 self.ui.set_mode(mode=1)
                             elif ui_element.ID == settings.BUTTON_ID_QUIT:
-                                quit()
+                                self.ui.set_mode(mode=8)
 
                         # Settings menu:
                         elif self.ui.active_mode == 1:
@@ -474,7 +481,7 @@ class Shell(arcade.Window):
                             elif ui_element.ID == settings.BUTTON_ID_MAIN_MENU:
                                 self.ui.set_mode(mode=5)
                             elif ui_element.ID == settings.BUTTON_ID_QUIT:
-                                quit()
+                                self.ui.set_mode(mode=8)
 
                         # Start new game confirmation menu:
                         elif self.ui.active_mode == 4:
@@ -500,7 +507,7 @@ class Shell(arcade.Window):
                                 self.ui.hide_clockface()
                                 self.ui.set_mode(mode=0)
                             elif ui_element.ID == settings.BUTTON_ID_QUIT:
-                                quit()
+                                self.ui.set_mode(mode=8)
 
                         # Game results (Game lost/force end):
                         elif self.ui.active_mode == 7:
@@ -510,7 +517,15 @@ class Shell(arcade.Window):
                                 self.ui.hide_clockface()
                                 self.ui.set_mode(mode=0)
                             elif ui_element.ID == settings.BUTTON_ID_QUIT:
+                                self.ui.set_mode(mode=8)
+
+                        # Quit confirmation menu:
+                        elif self.ui.active_mode == 8:
+                            if ui_element.ID == settings.BUTTON_ID_YES:
                                 quit()
+                            elif ui_element.ID == settings.BUTTON_ID_NO:
+                                prev_mode = self.ui.previous_mode
+                                self.ui.set_mode(mode=prev_mode)
 
         click_coordinates = [x, y]
 
