@@ -1,60 +1,22 @@
-from app.ui.elements import panel, button, clockface
+from app.ui.elements import panel, clockface
+from app.ui import setup
 
 
 class UI:
     def __init__(self):
         self.__mode = 0
-        self.clockface = None
-        self.collection = {0: [],               # Main menu
-                           1: [],               # Settings menu
-                           2: [],                   # Active game
-                           3: [],                   # Paused game
-                           4: [],                       # Start new game confirmation
-                           5: [],                       # End current game confirmation
-                           6: [],                           # Game won menu
-                           7: [],                           # Game lost menu
-                           }
-
-
-    def initialize(self):
-
-        def main_menu():
-            pass
-
-        def settings_menu():
-            pass
-
-        def active_game():
-            pass
-
-        def paused_game():
-            pass
-
-        def start_new():
-            pass
-
-        def end_current():
-            pass
-
-        def game_won():
-            pass
-
-        def game_lost():
-            pass
-
-        main_menu()
-        settings_menu()
-        active_game()
-        paused_game()
-        start_new()
-        end_current()
-        game_won()
-        game_lost()
-
         self.clockface = clockface.Clockface()
+        self.collection = {0: setup.build_main_menu(),                      # Main menu
+                           1: setup.build_settings_menu(),                  # Settings menu
+                           2: setup.build_active_game(),                    # Active game UI
+                           3: setup.build_paused_game(),                    # Paused game UI
+                           4: setup.build_start_new_confirmation(),         # Start new confirmation menu
+                           5: setup.build_end_current_confirmation(),       # End current confirmation menu
+                           6: setup.build_game_won(),                       # Game statistics UI (game won)
+                           7: setup.build_game_lost()}                      # Game statistics UI (game lost)
 
     def reset_clockface(self):
-        self.clockface.reset()
+        self.clockface.stopwatch.reset()
 
     @property
     def active_mode(self):
