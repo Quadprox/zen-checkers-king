@@ -3,7 +3,7 @@ import os
 
 # General project information and directories:
 PROJECT_NAME = 'Zen Checkers King'
-PROJECT_APP_VERSION = '0.7.0'
+PROJECT_APP_VERSION = '0.6.5'
 PROJECT_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_APP_DIR = os.path.dirname(__file__)
 PROJECT_TOOLS_DIR = os.path.join(PROJECT_DIR, 'tools')
@@ -90,6 +90,17 @@ BUTTON_CAPTION_COLOR = BUTTON_BORDER_COLOR
 BUTTON_SMALL_POSITION_X_LEFT = int(BOARD_SIDE_LEN + BUTTON_MARGIN_X + BUTTON_SMALL_WIDTH / 2)
 BUTTON_SMALL_POSITION_X_RIGHT = int(BOARD_SIDE_LEN + BUTTON_MARGIN_X * 2 + BUTTON_SMALL_WIDTH / 2)
 BUTTON_LARGE_POSITION_X_MIDDLE = int(BOARD_SIDE_LEN + UI_PANEL_WIDTH / 2)
+BUTTON_ID_START_GAME = 'StartGameButton'
+BUTTON_ID_RESTART_GAME = 'RestartGameButton'
+BUTTON_ID_SETTINGS = 'SettingsButton'
+BUTTON_ID_QUIT = 'QuitButton'
+BUTTON_ID_HINT = 'HintButton'
+BUTTON_ID_UNDO = 'UndoButton'
+BUTTON_ID_START_CONFIRM = 'StartGameConfirmationButton'
+BUTTON_ID_END_CONFIRM = 'EndGameConfirmationButton'
+BUTTON_ID_PAUSE = 'PauseButton'
+BUTTON_ID_RESUME = 'ResumeButton'
+BUTTON_ID_BACK = 'BackButton'
 
 # Clockface surface settings:
 CLOCKFACE_CAPTION_COLOR = TILE_COLOR_BLACK

@@ -1,4 +1,3 @@
-from functools import wraps
 from app import settings
 
 CLOCKFACE_POSITIONS = {

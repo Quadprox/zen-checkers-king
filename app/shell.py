@@ -2,6 +2,7 @@ import arcade
 from app import settings, session
 from app.board import mono as board, convert, test, get, mapping
 from app.checker import spawn
+from app.ui import mono as ui
 from tools.pencil import stamp
 
 
@@ -11,6 +12,7 @@ class Shell(arcade.Window):
 
         self.board = board.Board()
         self.player = None
+        self.ui = ui.UI()
 
         super().__init__(
             width=settings.GAME_WINDOW_WIDTH,
@@ -32,10 +34,15 @@ class Shell(arcade.Window):
         self.highlight_checkers_move = False
         self.highlight_checkers_attack = False
 
+        self.game_running = False
+        self.game_paused = False
+
 
     def setup(self):
 
         self.__board_reset()
+        self.ui.initialize()
+        self.ui.set_mode(mode=2)
 
         # Arcade preload functions:
         arcade.set_background_color(color=settings.GAME_WINDOW_BACKGROUND_COLOR)
@@ -83,9 +90,98 @@ class Shell(arcade.Window):
     def __board_reset(self):
         self.__board_clear()
         self.__board_fill()
+        self.__board_update()
 
     def __board_update(self):
         self.board.update()
+
+    def __ui_switch_mode(self, mode: int):
+
+        def end_current_game():
+            self.__board_reset()
+            self.__board_update()
+            self.active_player = 1
+            self.ui.clockface.stopwatch.reset()
+            if self.game_running:
+                self.game_running = False
+
+        def restart_game():
+            end_current_game()
+            self.ui.clockface.stopwatch.start()
+            if not self.game_running:
+                self.game_running = True
+            if self.game_paused:
+                self.game_paused = False
+
+        # Main menu
+        if self.ui.active_mode == 0:
+
+            # --> Active game (start new):
+            if mode == 2:
+                end_current_game()
+                self.ui.clockface.stopwatch.start()
+                if not self.game_running:
+                    self.game_running = True
+
+            # --> Game won:
+            elif mode == 6:
+                end_current_game()
+
+            # --> Game lost:
+            elif mode == 7:
+                end_current_game()
+
+            # --> Quit:
+            elif mode == -1:
+                quit()
+
+        # Settings menu:
+        elif self.ui.active_mode == 1:
+            pass
+
+        # Active game:
+        elif self.ui.active_mode == 2:
+
+            # --> Pause menu:
+            if mode == 3:
+                if not self.game_paused:
+                    self.game_paused = True
+                self.ui.clockface.stopwatch.pause()
+
+        # Pause menu:
+        elif self.ui.active_mode == 3:
+
+            # --> Active game (unpause):
+            if mode == 2:
+                if self.game_paused:
+                    self.game_paused = False
+                self.ui.clockface.stopwatch.unpause()
+
+        # Start new game menu confirmation:
+        elif self.ui.active_mode == 4:
+
+            # --> Active game (start new):
+            if mode == 2:
+                restart_game()
+
+        # End current game menu confirmation:
+        elif self.ui.active_mode == 5:
+
+            # --> Game lost (end current):
+            if mode == 7:
+                end_current_game()
+
+        # Game won:
+        elif self.ui.active_mode == 6:
+            pass
+
+        # Game won
+        elif self.ui.active_mode == 7:
+            pass
+
+        self.ui.set_mode(mode)
+
+
 
     def on_draw(self):
 
@@ -161,9 +257,7 @@ class Shell(arcade.Window):
 
         arcade.start_render()
 
-        import app.ui.elements.panel as panel
-
-        panel.display()
+        # Board rendering:
         self.board.display()
         if self.highlight_checkers_attack or self.highlight_checkers_move:
             display_highlighted_checkers()
@@ -172,6 +266,9 @@ class Shell(arcade.Window):
                 if not self.highlight_checkers_attack or self.highlight_checkers_move:
                     display_highlighted_tiles()
         self.board.display_checkers()
+
+        # UI rendering:
+        self.ui.display()
 
     def on_key_press(self, symbol: int, modifiers: int):
 
@@ -183,6 +280,7 @@ class Shell(arcade.Window):
             self.active_player = 1
         elif symbol == arcade.key.KEY_2:
             self.active_player = 2
+
         elif symbol == arcade.key.H:
             enable_hint()
 
@@ -222,7 +320,6 @@ class Shell(arcade.Window):
                     try_attacking()
                 else:
                     if self.__player_must_attack():
-                        print('Unable to move. You have a checker, that should perform an attack!')
                         deselect_checker()
                         force_hint()
                     else:
@@ -304,7 +401,11 @@ class Shell(arcade.Window):
         # Board surface clicked:
         if test.coordinates_in_board_boundaries(click_coordinates):
             if button == arcade.MOUSE_BUTTON_LEFT:
-                handle_board_click(click_coordinates)
+
+                # Checking if game is running and not paused to process the click command:
+                if self.game_running and not self.game_paused:
+                    handle_board_click(click_coordinates)
+
             else:
                 handle_board_click_dev(click_coordinates)
 

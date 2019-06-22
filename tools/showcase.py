@@ -34,12 +34,13 @@ def __finish_render():
     arcade.run()
 
 
-def board_surface(filled: bool = False):
+def board_surface(board_filled: bool = False):
     __initialize(showcase_object='board')
     __start_render()
-    if filled:
-        board.Board().fill()
     board.Board().display()
+    if board_filled:
+        board.Board().fill()
+        board.Board().display_checkers()
     __finish_render()
 
 
@@ -59,25 +60,29 @@ def panel_surface():
     __initialize(showcase_object='panel')
     __start_render()
     panel = ui.UI()
-    panel.set_mode(mode=1)
+    panel.set_mode(mode=2)
     panel.initialize()
     panel.display()
     __finish_render()
 
 
-def project_surface():
+def project_surface(board_filled: bool = True):
     __initialize(showcase_object='project')
     __start_render()
 
-    # Setting up board (filled with checkers at game start)
-    board.Board().fill()
+    # Setting up board (filled with checkers at game start by default)
     board.Board().display()
+    if board_filled:
+        board.Board().fill()
+        board.Board().display_checkers()
 
     # Setting up UI panel (active game mode)
     panel = ui.UI()
-    panel.set_mode(mode=1)
+    panel.set_mode(mode=2)
     panel.initialize()
     panel.display()
 
+    __finish_render()
 
-panel_surface()
+
+project_surface()
