@@ -136,3 +136,9 @@ class MainMenuButton(Button):
     def __init__(self, init_position: list, init_filled: bool = False):
         super().__init__(init_position, init_filled)
         self.set_caption('Main Menu')
+
+class ContinueButton(Button):
+    ID = settings.BUTTON_ID_CONTINUE
+    def __init__(self, init_position: list, init_filled: bool = False):
+        super().__init__(init_position, init_filled)
+        self.set_caption('Continue')
