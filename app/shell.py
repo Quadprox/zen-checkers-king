@@ -91,7 +91,10 @@ class Shell(arcade.Window):
                 index=self.active_player),
             level=1)
         if self.__player_cannot_move():
-            self.__board_reset()
+            if self.active_player == 1:
+                pass # TODO
+            else:
+                pass # TODO
 
     def __board_clear(self):
         self.board.clear()
@@ -101,6 +104,10 @@ class Shell(arcade.Window):
         self.board.update()
 
     def __board_reset(self):
+        console.echo(
+            message='Resetting board surface...',
+            level=2)
+        self.board.update()
         self.__board_clear()
         self.__board_fill()
         self.__board_update()

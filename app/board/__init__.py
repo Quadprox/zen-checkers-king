@@ -1,5 +1,5 @@
 import app.board.mapping as mapping
-import app.settings as settings
+from app import settings
 
 
 # Setting up mapping dictionary:

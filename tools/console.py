@@ -14,8 +14,13 @@ def echo(message: str, level: int = 1):
     separator = ''
     if level > 1:
         separator += '˪ ' * (level - 1)
-    if session.DEBUG_MODE:
+    if session.DEV_MODE:
         if level == 1:
             print()
-        response = f'{timestamp()} - DEBUG MODE: {separator}{message}'
+        response = f'{timestamp()} - DEV MODE: {separator}{message}'
         print(response)
+
+def error(message: str):
+    if session.DEBUG_MODE:
+        error = f'{timestamp()} - DEBUG MODE: {message}'
+        print(error)

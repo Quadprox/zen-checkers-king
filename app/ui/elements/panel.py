@@ -18,7 +18,7 @@ def __render_texture():
 
 
 def display():
-    mode = session.RENDER_MODE_GLOBAL
+    # mode = session.RENDER_MODE_GLOBAL
     render = {
         0: lambda: __render_opengl(),
         1: lambda: __render_texture(),
