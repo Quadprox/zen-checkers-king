@@ -29,9 +29,9 @@ class UI:
             preset_name = mapping.PRESET_NAMES[preset]
             for ui_element in self.collection[preset]:
                 console.echo(
-                    message='Created {object} {position} {collection}'.format(
+                    message='Created {object}{position} {collection}'.format(
                         object=ui_element,
-                        position=f'at {ui_element.position}' if isinstance(ui_element, button.Button) else '',
+                        position=f' at {ui_element.position}' if isinstance(ui_element, button.Button) else '',
                         collection=f'at {preset_name}'),
                     level=2)
 

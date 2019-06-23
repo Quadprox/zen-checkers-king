@@ -294,8 +294,8 @@ class Shell(arcade.Window):
         # Start new game confirmation menu:
         elif self.ui.active_mode == 4:
             if symbol == arcade.key.SPACE:
-                self.restart_game()
-                self.ui.set_mode(mode=2)
+                self.stop_game()
+                self.ui.set_mode(mode=7)
             elif symbol == arcade.key.ESCAPE:
                 self.ui.set_mode(mode=3)
 
@@ -542,6 +542,7 @@ class Shell(arcade.Window):
             for ui_element in self.ui.collection[self.ui.active_mode]:
                 if isinstance(ui_element, Button):
                     if click.coordinates_in_button_boundaries(coordinates, ui_element):
+
                         # Main menu:
                         if self.ui.active_mode == 0:
                             if ui_element.ID == settings.BUTTON_ID_START_GAME:
@@ -550,6 +551,7 @@ class Shell(arcade.Window):
                                 self.start_game()
                                 self.display_checkers = True
                             elif ui_element.ID == settings.BUTTON_ID_SETTINGS:
+                                self.ui.hide_clockface()
                                 console_echo_button_click(ui_element.caption)
                                 self.ui.set_mode(mode=1)
                             elif ui_element.ID == settings.BUTTON_ID_QUIT:
@@ -572,6 +574,7 @@ class Shell(arcade.Window):
                                 self.ui.set_mode(mode=3)
                                 self.game_paused = True
                                 self.ui.clockface.stopwatch.pause()
+                                self.ui.hide_clockface()
                             elif ui_element.ID == settings.BUTTON_ID_HINT:
                                 console_echo_button_click(ui_element.caption)
                                 if hint_enabled():
@@ -589,6 +592,7 @@ class Shell(arcade.Window):
                                 self.ui.set_mode(mode=2)
                                 if self.game_paused:
                                     self.game_paused = False
+                                self.ui.show_clockface()
                                 self.ui.clockface.stopwatch.unpause()
                             elif ui_element.ID == settings.BUTTON_ID_RESTART_GAME:
                                 console_echo_button_click(ui_element.caption)
@@ -607,8 +611,8 @@ class Shell(arcade.Window):
                         elif self.ui.active_mode == 4:
                             if ui_element.ID == settings.BUTTON_ID_YES:
                                 console_echo_button_click(ui_element.caption)
-                                self.ui.set_mode(mode=2)
-                                self.restart_game()
+                                self.ui.set_mode(mode=7)
+                                self.stop_game()
                             elif ui_element.ID == settings.BUTTON_ID_NO:
                                 console_echo_button_click(ui_element.caption)
                                 self.ui.set_mode(mode=3)
