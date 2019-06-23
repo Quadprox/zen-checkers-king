@@ -57,6 +57,9 @@ class AppInformation:
         self.__caption= settings.GAME_WINDOW_TITLE
         self.__position = 1
 
+    def __str__(self):
+        return f'UI element (app information caption \"{self.caption}\")'
+
     @property
     def caption(self):
         return self.__caption
