@@ -28,11 +28,12 @@ def build_settings_menu():
 def build_active_game():
     collection = [
         divider.ClockfaceDivider(),
-        divider.LowerDivider(),
-        text.MovesHistoryCaption(),
+        # divider.LowerDivider(),
+        # text.MovesHistoryCaption(),
         button.PauseButton(init_position=[4, 0]),
-        button.HintButton(init_position=[5, 1]),
-        button.UndoButton(init_position=[5, 2]),
+        button.HintButton(init_position=[5, 0]),
+        # button.HintButton(init_position=[5, 1]),
+        # button.UndoButton(init_position=[5, 2]),
         text.AppInformation(),
     ]
     return collection
