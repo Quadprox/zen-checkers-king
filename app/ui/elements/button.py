@@ -8,7 +8,7 @@ class Button:
 
     ID = None
 
-    def __init__(self,init_position: list, init_filled: bool = False):
+    def __init__(self, init_position: list, init_filled: bool = False):
         self.__caption = None
         self.__position = init_position
         self.__size = 'large' if init_position[1] == 0 else 'small'
@@ -44,7 +44,7 @@ class Button:
         return result
 
     def set_caption(self, caption: str):
-        self.__caption = str(caption).upper()
+        self.__caption = str(caption).capitalize()
 
     def display(self):
         if self.is_valid:

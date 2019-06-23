@@ -20,6 +20,26 @@ CLOCKFACE_POSITIONS = {
     2: [0, 0]                                                               # Alternative position
 }
 
+MENU_NAME_POSITION = {
+    1: [660, 452]
+}
+
+APP_INFORMATION = {
+    1: [660, 20]
+}
+
+TURN_HISTORY_POSITIONS = {
+    0: [settings.DIVIDER_POSITION_X, 182],
+    1: [],
+    2: []
+}
+
+DIVIDER_POSITIONS = {
+    1: [settings.DIVIDER_POSITION_X, 472],
+    2: [settings.DIVIDER_POSITION_X, 192],
+    3: []
+}
+
 BUTTON_GRID_POSITIONS = {
 
     # 1 to 5 are positions from top to bottom displayed on the panel surface. The lower the number, the higher the
