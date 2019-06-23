@@ -86,13 +86,13 @@ class AppInformation:
         )
 
 
-class TurnHistoryCaption:
+class MovesHistoryCaption:
     def __init__(self):
         self.__position = 0
-        self.__caption = 'Turn history'
+        self.__caption = 'Moves history'
 
     def __str__(self):
-        return f'UI element (turn history caption \"{self.caption}\")'
+        return f'UI element (moves history caption \"{self.caption}\")'
 
     @property
     def caption(self):
