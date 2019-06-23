@@ -50,8 +50,10 @@ class Stopwatch:
             start_time = self.__started
             pause_time = self.__paused
             end_time = self.__stopped
+
             if self.running:
                 end_time = clock.now(formatted=False)
+
             if not self.paused:
                 unskipped_time = difference.dt(dt_start=start_time, dt_end=end_time)
                 final_time = unskipped_time - self.__skip
@@ -59,4 +61,5 @@ class Stopwatch:
             else:
                 final_time = difference.dt(dt_start=start_time, dt_end=pause_time) - self.__skip
                 final_time_formatted = convert.seconds_to_list(final_time)
+                
             return final_time_formatted

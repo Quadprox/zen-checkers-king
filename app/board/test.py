@@ -1,4 +1,5 @@
-import app.settings as settings
+from app import settings, session
+from tools import console
 
 
 def __is_type_list(value):
@@ -26,6 +27,12 @@ def position_is_valid(check_position: list):
             column_range = range(1, settings.BOARD_COLUMN_COUNT + 1)
             if row in row_range and column in column_range:
                 test_result = True
+        else:
+            error_message = f'Board position {check_position} is invalid. Only integer-type values allowed!'
+            console.error(error_message)
+    else:
+        error_message = f'Board position {check_position} is invalid (not list-type)!'
+        console.error(error_message)
     return test_result
 
 
@@ -55,6 +62,17 @@ def coordinates_are_valid(check_coordinates: list):
         if __is_type_integer(coord_x) and __is_type_integer(coord_y):
             if __is_positive(coord_x) and __is_positive(coord_y):
                 test_result = True
+            else:
+                error_message = f'Coordinates {check_coordinates} are invalid. ' \
+                                f'Only positive integer-type values allowed!'
+                console.error(error_message)
+        else:
+            error_message = f'Coordinates {check_coordinates} are invalid. ' \
+                            f'Only integer-type values allowed!'
+            console.error(error_message)
+    else:
+        error_message = f'Coordinates {check_coordinates} are invalid (not list-type)!'
+        console.error(error_message)
     return test_result
 
 

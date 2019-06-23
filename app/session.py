@@ -1,4 +1,4 @@
-DEV_MODE = False
+DEV_MODE = True
 TEST_MODE = False
 DEBUG_MODE = True
 

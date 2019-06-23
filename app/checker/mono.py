@@ -1,5 +1,6 @@
-import app.board.convert as convert
+from app.board import convert
 from app.checker import surface, behavior
+from tools import console
 
 
 class Checker:
@@ -28,8 +29,7 @@ class Checker:
     def __str__(self):
         checker_information = '{color} {checker}'.format(
             color=self.color,
-            checker="checker (queen)" if self.queen else "checker",
-        )
+            checker="checker (queen)" if self.queen else "checker",)
         return checker_information
 
     @property
@@ -82,6 +82,12 @@ class Checker:
     def promote(self):
         if not self.queen:
             self.queen = True
+            console.echo(
+                message='{color} checker at {position} is promoted to Queen-type!'.format(
+                    color=self.color.capitalize(),
+                    position=self.index),
+                level=1)
+
 
     def move(self, position):
         behavior.move(checker_object=self, new_position=position)

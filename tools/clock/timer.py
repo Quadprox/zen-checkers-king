@@ -1,4 +1,5 @@
 from tools.clock import mono as clock, difference, convert
+from tools import console
 
 
 class Timer:
@@ -20,9 +21,6 @@ class Timer:
         self.__skip = 0
         self.__set = None
 
-    def __str__(self):
-        pass
-
     @property
     def ring(self):
         time_up = False
@@ -39,6 +37,10 @@ class Timer:
         if self.__set is not None:
             self.running = True
             self.__started = clock.now(formatted=False)
+        else:
+            console.error(
+                message='Unable to start Timer: Timer object {object} is already running!'.format(
+                    object=self))
 
     def pause(self):
         self.__paused = clock.now(formatted=False)
@@ -58,6 +60,10 @@ class Timer:
             self.__resumed = None
             self.__skip = 0
             self.__set = None
+        else:
+            console.error(
+                message='Unable to stop Timer: Timer object {object} is not running!'.format(
+                    object=self))
 
     @property
     def elapsed(self):
@@ -68,6 +74,10 @@ class Timer:
             final_time = unskipped_time - self.__skip
             final_time_formatted = convert.seconds_to_list(final_time)
             return final_time_formatted
+        else:
+            console.error(
+                message='Unable to retrieve Timer elapsed time: Timer object {object} is not running!'.format(
+                    object=self))
 
     @property
     def remaining(self):
