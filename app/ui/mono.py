@@ -17,6 +17,7 @@ class UI:
                            6: setup.build_game_won(),                       # Game statistics UI (game won)
                            7: setup.build_game_lost(),                      # Game statistics UI (game lost)
                            8: setup.build_quit_confirmation(),              # App quit confirmation menu
+                           9: setup.build_game_draw(),                      # Game statistics UI (game draw)
                            }
 
         self.__show_clockface = False

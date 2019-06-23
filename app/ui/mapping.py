@@ -10,7 +10,8 @@ PRESET_NAMES = {
     5: 'End current game menu',
     6: 'Game results (game won)',
     7: 'Game results (game lost/force restarted)',
-    8: 'Quit app confirmation menu'
+    8: 'Quit app confirmation menu',
+    9: 'Game results (game draw)',
 }
 
 

@@ -57,3 +57,8 @@ def build_quit_confirmation():
     collection = [button.YesButton(init_position=[1, 1]),
                   button.NoButton(init_position=[1, 2])]
     return collection
+
+def build_game_draw():
+    collection = [button.ContinueButton(init_position=[4, 0]),
+                  button.QuitButton(init_position=[5, 0])]
+    return collection

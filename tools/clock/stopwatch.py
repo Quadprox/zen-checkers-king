@@ -61,5 +61,5 @@ class Stopwatch:
             else:
                 final_time = difference.dt(dt_start=start_time, dt_end=pause_time) - self.__skip
                 final_time_formatted = convert.seconds_to_list(final_time)
-                
+
             return final_time_formatted
