@@ -57,6 +57,25 @@ class Shell(arcade.Window):
         arcade.set_background_color(color=settings.GAME_WINDOW_BACKGROUND_COLOR)
         arcade.run()
 
+    def start_game(self):
+        self.game_running = True
+        self.game_paused = False
+        self.__board_reset()
+        self.active_player = 1
+        self.ui.show_clockface()
+        self.ui.clockface.stopwatch.start()
+
+    def restart_game(self):
+        self.ui.clockface.stopwatch.stop()
+        self.ui.clockface.stopwatch.reset()
+        self.start_game()
+
+    def stop_game(self):
+        self.ui.clockface.stopwatch.stop()
+        self.game_running = False
+        self.game_paused = False
+        self.active_player = 1
+
     def __remove_all_highlights(self):
         self.highlight_checkers_attack = False
         self.highlight_checkers_move = False
@@ -82,7 +101,28 @@ class Shell(arcade.Window):
                 if checker.can_move:
                     cannot_move = False
                     break
+        if cannot_move:
+            console.echo(
+                message='Player {index} is unable to move'.format(
+                    index=self.active_player),
+                level=2)
         return cannot_move
+
+    def __player_has_no_checkers(self):
+        no_checkers = True
+        for row in mapping.SURFACE_GRID:
+            for column in mapping.SURFACE_GRID[row]:
+                position = [row, column]
+                checker = get.checker_by_position(position)
+                if checker is not None:
+                    if checker.color == self.__player_color():
+                        no_checkers = False
+        if no_checkers:
+            console.echo(
+                message='Player {index} has no checkers remaining on the board!'.format(
+                    index=self.active_player),
+                level=3)
+        return no_checkers
 
     def __next_player_turn(self):
         self.active_player = 2 if self.active_player == 1 else 1
@@ -91,10 +131,14 @@ class Shell(arcade.Window):
                 index=self.active_player),
             level=1)
         if self.__player_cannot_move():
-            if self.active_player == 1:
-                pass # TODO
+            if self.__player_has_no_checkers():
+                if self.active_player == 1:
+                    self.ui.set_mode(mode=7)
+                else:
+                    self.ui.set_mode(mode=6)
             else:
-                pass # TODO
+                self.ui.set_mode(mode=9)
+            self.stop_game()
 
     def __board_clear(self):
         self.board.clear()
@@ -208,24 +252,6 @@ class Shell(arcade.Window):
 
     def on_key_press(self, symbol: int, modifiers: int):
 
-        def start_game():
-            self.game_running = True
-            self.game_paused = False
-            self.__board_reset()
-            self.active_player = 1
-            self.ui.show_clockface()
-            self.ui.clockface.stopwatch.start()
-
-        def restart_game():
-            self.ui.clockface.stopwatch.stop()
-            self.ui.clockface.stopwatch.reset()
-            start_game()
-
-        def stop_game():
-            self.game_running = False
-            self.game_paused = False
-            self.active_player = 1
-
         def enable_hint():
             self.highlight_checkers_move = True
             self.highlight_checkers_attack = True
@@ -236,7 +262,7 @@ class Shell(arcade.Window):
             if symbol == arcade.key.SPACE:
                 self.ui.set_mode(mode=2)
                 self.display_checkers = True
-                start_game()
+                self.start_game()
             elif symbol == arcade.key.ESCAPE:
                 self.ui.set_mode(mode=8)
 
@@ -268,7 +294,7 @@ class Shell(arcade.Window):
         # Start new game confirmation menu:
         elif self.ui.active_mode == 4:
             if symbol == arcade.key.SPACE:
-                restart_game()
+                self.restart_game()
                 self.ui.set_mode(mode=2)
             elif symbol == arcade.key.ESCAPE:
                 self.ui.set_mode(mode=3)
@@ -276,7 +302,7 @@ class Shell(arcade.Window):
         # End current game confirmation menu:
         elif self.ui.active_mode == 5:
             if symbol == arcade.key.SPACE:
-                stop_game()
+                self.stop_game()
                 self.ui.set_mode(mode=7)
             elif symbol == arcade.key.ESCAPE:
                 self.ui.set_mode(mode=3)
@@ -310,6 +336,17 @@ class Shell(arcade.Window):
             elif symbol == arcade.key.ESCAPE:
                 prev_mode = self.ui.previous_mode
                 self.ui.set_mode(mode=prev_mode)
+
+        # Game results (Game draw):
+        elif self.ui.active_mode == 9:
+            if symbol == arcade.key.SPACE:
+                self.ui.clockface.stopwatch.stop()
+                self.ui.clockface.stopwatch.reset()
+                self.ui.hide_clockface()
+                self.display_checkers = False
+                self.ui.set_mode(mode=0)
+            elif symbol == arcade.key.ESCAPE:
+                self.ui.set_mode(mode=8)
 
     def on_key_release(self, symbol: int, modifiers: int):
 
@@ -472,24 +509,6 @@ class Shell(arcade.Window):
 
         def handle_panel_click(coordinates):
 
-            def start_game():
-                self.game_running = True
-                self.game_paused = False
-                self.__board_reset()
-                self.active_player = 1
-                self.ui.show_clockface()
-                self.ui.clockface.stopwatch.start()
-
-            def restart_game():
-                self.ui.clockface.stopwatch.stop()
-                self.ui.clockface.stopwatch.reset()
-                start_game()
-
-            def stop_game():
-                self.game_running = False
-                self.game_paused = False
-                self.active_player = 1
-
             def show_hint():
                 console.echo(
                     message='Hint enabled. Highlighting possible moves...',
@@ -528,7 +547,7 @@ class Shell(arcade.Window):
                             if ui_element.ID == settings.BUTTON_ID_START_GAME:
                                 console_echo_button_click(ui_element.caption)
                                 self.ui.set_mode(mode=2)
-                                start_game()
+                                self.start_game()
                                 self.display_checkers = True
                             elif ui_element.ID == settings.BUTTON_ID_SETTINGS:
                                 console_echo_button_click(ui_element.caption)
@@ -589,7 +608,7 @@ class Shell(arcade.Window):
                             if ui_element.ID == settings.BUTTON_ID_YES:
                                 console_echo_button_click(ui_element.caption)
                                 self.ui.set_mode(mode=2)
-                                restart_game()
+                                self.restart_game()
                             elif ui_element.ID == settings.BUTTON_ID_NO:
                                 console_echo_button_click(ui_element.caption)
                                 self.ui.set_mode(mode=3)
@@ -599,7 +618,7 @@ class Shell(arcade.Window):
                             if ui_element.ID == settings.BUTTON_ID_YES:
                                 console_echo_button_click(ui_element.caption)
                                 self.ui.set_mode(mode=7)
-                                stop_game()
+                                self.stop_game()
                             elif ui_element.ID == settings.BUTTON_ID_NO:
                                 console_echo_button_click(ui_element.caption)
                                 self.ui.set_mode(mode=3)
@@ -639,6 +658,19 @@ class Shell(arcade.Window):
                                 console_echo_button_click(ui_element.caption)
                                 prev_mode = self.ui.previous_mode
                                 self.ui.set_mode(mode=prev_mode)
+
+                        # Game results (Game draw):
+                        elif self.ui.active_mode == 9:
+                            if ui_element.ID == settings.BUTTON_ID_CONTINUE:
+                                console_echo_button_click(ui_element.caption)
+                                self.ui.clockface.stopwatch.stop()
+                                self.ui.clockface.stopwatch.reset()
+                                self.ui.hide_clockface()
+                                self.display_checkers = False
+                                self.ui.set_mode(mode=0)
+                            elif ui_element.ID == settings.BUTTON_ID_QUIT:
+                                console_echo_button_click(ui_element.caption)
+                                self.ui.set_mode(mode=8)
 
 
         click_coordinates = [x, y]
