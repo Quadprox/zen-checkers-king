@@ -46,16 +46,15 @@ class Shell(arcade.Window):
         self.game_running = False
         self.game_paused = False
 
-
-
     @staticmethod
     def setup():
-        # Shell specific setup:
         pass
 
-        # Arcade preload functions:
+    @staticmethod
+    def run():
         arcade.set_background_color(color=settings.GAME_WINDOW_BACKGROUND_COLOR)
         arcade.run()
+        return
 
     def start_game(self):
         self.game_running = True
@@ -700,6 +699,3 @@ class Shell(arcade.Window):
 
     def update(self, delta_time: float):
         pass
-
-shell = Shell()
-shell.setup()

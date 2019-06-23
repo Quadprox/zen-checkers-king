@@ -29,7 +29,7 @@ def build_active_game():
     collection = [
         divider.ClockfaceDivider(),
         divider.LowerDivider(),
-        text.TurnHistoryCaption(),
+        text.MovesHistoryCaption(),
         button.PauseButton(init_position=[4, 0]),
         button.HintButton(init_position=[5, 1]),
         button.UndoButton(init_position=[5, 2]),
